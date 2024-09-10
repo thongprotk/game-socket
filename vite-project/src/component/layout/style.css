@@ -1,0 +1,8 @@
+.layout {
+    background-image: url("../../assets/OTT.png");
+    width: 375px;
+    height: 100dvh;
+    margin: auto;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
