@@ -3,8 +3,9 @@ import Drag from "../../assets/drag.png";
 import Leaves from "../../assets/leaves.png";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
+import { useParams } from "react-router-dom";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:5000");
 
 const FIGHT_OPTION = {
   KEO: 1,
@@ -21,58 +22,61 @@ export default function FightContent(props) {
     result,
     setResult,
     roomID,
-    player1,
     socket,
   } = props;
 
+  const { player } = useParams();
   const clickChoice = (rpsChoice) => {
     setManSelected(rpsChoice);
-    socket.emit("p1Choice", {
+    const selectedChoice = String(player) === "1" ? "p1Choice" : "p2Choice";
+    socket.emit(selectedChoice, {
       rpsChoice: rpsChoice,
       roomID: roomID,
     });
   };
-  console.log(manSelected);
-  console.log(`players go to ${roomID}`);
   useEffect(() => {
-    if (!roomID) return;
-    socket.on("p1Choice", (data) => {
-      roomID = data.roomID;
-      setManSelected(data.rpsValue);
-      console.log("Player 1 picked:", data.rpsValue);
+    if (!roomID) {
+    }
+    // socket.on("p1Choice", (data) => {
+    //   roomID = data.roomID;
+    //   setManSelected(data.rpsValue);
+    //   console.log("Player 1 picked:", data.rpsValue);
+    // });
+    // socket.on("p2Choice", (data) => {
+    //   roomID = data.roomID;
+    //   setOpponentSelected(data.rpsValue);
+    //   console.log("Player 2 picked:", data.rpsValue);
+    // });
+    socket.on("winner", (data) => {
+      if (data?.roomID === roomID) {
+        alert(
+          `Bạn là người ${
+            String(player) === data?.winner ? "chiến thắng" : "thua cuộc"
+          }`
+        );
+        // if (data.winner == "draw") {
+        //   setResult("draw");
+        // } else if (data.winner === "p1") {
+        //   if (player === 1) {
+        //     setResult("you win");
+        //   } else {
+        //     setResult("you lose");
+        //   }
+        // } else if (data.winner === "p2") {
+        //   if (player === 2) {
+        //     setResult("you win");
+        //   } else {
+        //     setResult("you lose");
+        //   }
+        // }
+      }
     });
-    socket.on("p2Choie", (data) => {
-      roomID = data.roomID;
-      setOpponentSelected(data.rpsValue);
-      console.log("Player 2 picked:", data.rpsValue);
-    });
-    socket.on(
-      "winner",
-      (data) => {
-        if (data == "draw") {
-          setResult("draw");
-        } else if ((data = "p1")) {
-          if (player1) {
-            setResult("you win");
-          } else {
-            setResult("you lose");
-          }
-        } else if ((data = "p2")) {
-          if (!player1) {
-            setResult("you win ");
-          } else {
-            setResult("you lose");
-          }
-        }
-      },
-      [player1, opponentSelected]
-    );
     return () => {
-      socket.off("p1Choice");
-      socket.off("p2Choice");
+      // socket.off("p1Choice");
+      // socket.off("p2Choice");
       socket.off("winner");
     };
-  }, [opponentSelected, socket, roomID]);
+  }, [opponentSelected, socket, roomID, player]);
 
   const renderChoiceImage = (rpsChoice) => {
     switch (rpsChoice) {

@@ -6,7 +6,7 @@ import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import { RouterName } from "../../../constants";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:5000");
 
 export default function HomeContent() {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ export default function HomeContent() {
   const joinRoom = () => {
     socket.emit("joinRoom", roomID);
   };
+
   useEffect(() => {
     if (isSearching && time > 0) {
       const timer = setInterval(() => {
@@ -47,8 +48,12 @@ export default function HomeContent() {
   useEffect(() => {
     // console.log(`Room ${roomID} is ready!`);
     socket.on("playersConnected", (data) => {
-      console.log(`player connected ${data.roomID}`);
-      navigate(`${RouterName.FIGHT.replace(":roomID", roomID)}`);
+      navigate(
+        `${RouterName.FIGHT.replace(":roomID", roomID).replace(
+          ":player",
+          `${data.player1 ? 1 : 2}`
+        )}`
+      );
     });
     return () => {
       socket.off("playersConnected");

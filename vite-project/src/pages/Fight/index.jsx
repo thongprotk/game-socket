@@ -7,28 +7,27 @@ import ModalInformationLose from "./modalLose";
 import io from "socket.io-client";
 import { useParams } from "react-router-dom";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:5000");
 
 export default function Fight() {
-  const {roomID} = useParams();
+  const { roomID, player } = useParams();
   const [result, setResult] = useState("");
   const [manSelected, setManSelected] = useState();
   const [manOption, setManOption] = useState([]);
   const [opponentOption, setOpponentOption] = useState([]);
   const [opponentSelected, setOpponentSelected] = useState();
   const [saveResult, setSaveResult] = useState();
-  const [player1, setPlayer1] = useState(false);
-
   useEffect(() => {
     socket.on("playersConnected", () => {
-      roomID
+      roomID;
     });
     if (roomID) {
       console.log("Joined room:", roomID);
     }
   }, [roomID]);
+
   const optionChoice = (result) => {
-    if (result === "lose") {
+    if (result === "you lose") {
       setManOption([...manOption, 0]);
       setOpponentOption([...opponentOption, 1]);
     } else if (result === "draw") {
@@ -64,8 +63,8 @@ export default function Fight() {
   useEffect(() => {
     setSaveResult(checkGame(manOption));
     setSaveResult(checkGame(opponentOption));
-   
   }, [manOption, opponentOption]);
+
   return (
     <div className="fight-display">
       <Header />
@@ -84,7 +83,6 @@ export default function Fight() {
         optionChoice={optionChoice}
         socket={socket}
         roomID={roomID}
-        player1={player1}
       />
 
       <ManVsMan manOption={manOption} opponentOption={opponentOption} />
