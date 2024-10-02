@@ -12,21 +12,6 @@ const FIGHT_OPTION = {
   BAO: 3,
 };
 
-const FIGHT_LIST = [
-  {
-    value: FIGHT_OPTION.KEO,
-    label: "keo",
-  },
-  {
-    value: FIGHT_OPTION.BUA,
-    label: "bua",
-  },
-  {
-    value: FIGHT_OPTION.BAO,
-    label: "bao",
-  },
-];
-
 export default function FightContent(props) {
   const {
     manSelected,
@@ -35,72 +20,62 @@ export default function FightContent(props) {
     setOpponentSelected,
     result,
     setResult,
-    optionChoice,
-    opponentId,
-    setOpponentId,
-    selfId,
-    setSelfId,
+    roomID,
+    player1,
+    socket,
   } = props;
 
-  // const determineWinnerChoice = (opponentSelected, playerChoice) => {
-  //   if (playerChoice === opponentSelected) {
-  //     return "draw";
-  //   } else if (
-  //     (playerChoice === FIGHT_OPTION.KEO &&
-  //       opponentSelected === FIGHT_OPTION.BAO) ||
-  //     (playerChoice === FIGHT_OPTION.BUA &&
-  //       opponentSelected === FIGHT_OPTION.KEO) ||
-  //     (playerChoice === FIGHT_OPTION.BAO &&
-  //       opponentSelected === FIGHT_OPTION.BUA)
-  //   ) {
-  //     return "win";
-  //   } else {
-  //     return "lose";
-  //   }
-  // };
-
-  useEffect(() => {
-    socket.on('firstPlayerId',(data)=>{
-      setSelfId(data.id)
-      console.log('1:',data.id)
-    })
-    socket.on('secondPlayerId',(data)=>{
-      setOpponentId(data.idVs)
-      console.log('2:',data.idVs);
-    })
-    socket.on("startGame", (data) => {
-      setOpponentId(data.idVs);
-      setSelfId(data.id);
-      console.log(`Opponent ID set to: ${data.idVs} , ${data.id}`);
+  const clickChoice = (rpsChoice) => {
+    setManSelected(rpsChoice);
+    socket.emit("p1Choice", {
+      rpsChoice: rpsChoice,
+      roomID: roomID,
     });
-
-    socket.on("result", (data) => {
-      setManSelected(data.manSelected);
-      setOpponentSelected(data.opponentChoice);
-      setResult(data.result);
-      optionChoice(data.optionChoice);
-    });
-    return () => {
-      socket.off("startGame");
-      socket.off("opponentChoice");
-      socket.off("result");
-    };
-  }, [selfId, opponentId]);
-  // useEffect(() => {
-  //   console.log("manSelected has changed:", manSelected);
-  //   console.log("opponentSelected has changed:", opponentSelected);
-  // }, [manSelected, opponentSelected]);
-  const playerChoice = (choice) => {
-    console.log("selfid", selfId, "opponentid", opponentId);
-    if (opponentId && selfId) {
-      console.log(choice);
-      socket.emit("choices", { choice });
-      setManSelected(choice);
-      console.log(choice);
-    }
   };
-  const renderChoiceImage = (choice) => {
-    switch (choice) {
+  console.log(manSelected);
+  console.log(`players go to ${roomID}`);
+  useEffect(() => {
+    if (!roomID) return;
+    socket.on("p1Choice", (data) => {
+      roomID = data.roomID;
+      setManSelected(data.rpsValue);
+      console.log("Player 1 picked:", data.rpsValue);
+    });
+    socket.on("p2Choie", (data) => {
+      roomID = data.roomID;
+      setOpponentSelected(data.rpsValue);
+      console.log("Player 2 picked:", data.rpsValue);
+    });
+    socket.on(
+      "winner",
+      (data) => {
+        if (data == "draw") {
+          setResult("draw");
+        } else if ((data = "p1")) {
+          if (player1) {
+            setResult("you win");
+          } else {
+            setResult("you lose");
+          }
+        } else if ((data = "p2")) {
+          if (!player1) {
+            setResult("you win ");
+          } else {
+            setResult("you lose");
+          }
+        }
+      },
+      [player1, opponentSelected]
+    );
+    return () => {
+      socket.off("p1Choice");
+      socket.off("p2Choice");
+      socket.off("winner");
+    };
+  }, [opponentSelected, socket, roomID]);
+
+  const renderChoiceImage = (rpsChoice) => {
+    switch (rpsChoice) {
       case FIGHT_OPTION.BUA:
         return (
           <img
@@ -155,7 +130,7 @@ export default function FightContent(props) {
         <div
           className="punk"
           onClick={() => {
-            playerChoice(FIGHT_OPTION.BUA);
+            clickChoice(FIGHT_OPTION.BUA);
           }}
         >
           <img src={Punch} alt="punch" />
@@ -163,7 +138,7 @@ export default function FightContent(props) {
         <div
           className="drag"
           onClick={() => {
-            playerChoice(FIGHT_OPTION.KEO);
+            clickChoice(FIGHT_OPTION.KEO);
           }}
         >
           <img src={Drag} alt="drag" />
@@ -171,7 +146,7 @@ export default function FightContent(props) {
         <div
           className="leaves"
           onClick={() => {
-            playerChoice(FIGHT_OPTION.BAO);
+            clickChoice(FIGHT_OPTION.BAO);
           }}
         >
           <img src={Leaves} alt="leaves" />
