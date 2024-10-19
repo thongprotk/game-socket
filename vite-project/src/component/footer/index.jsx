@@ -4,17 +4,30 @@ import ButtonCup from "../../assets/Frame-cup.png";
 import Sound from "../../assets/sound.png";
 import MakeGold from "../../assets/set-icon.svg";
 import LogReview from "../../assets/log-out.svg";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { RouterName } from "../../../constants";
+
 export default function Footer() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const toggleDropdown = () => {
     setOpen(!open);
   };
+  const handleClick = () => {
+    navigate(RouterName.RESULT);
+  };
+
   return (
     <div className="footer">
       <div className="button-click">
         <div>
-          <img src={ButtonCup} alt="" style={{ border: "none" }} />
+          <img
+            src={ButtonCup}
+            alt=""
+            style={{ border: "none" }}
+            onClick={handleClick}
+          />
         </div>
         <div>
           <img src={ButtonMenu} alt="" />

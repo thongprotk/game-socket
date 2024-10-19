@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import FightContent from "../FightComputer/FightContent";
-import Header from "../../component/header";
+import Header from "../../component/header/headerRoom";
 import PeopleChoose from "../../component/footer/peopleChoose";
 import ModalInformationWin from "../FightComputer/modeInfomation";
 import { useState } from "react";
@@ -12,7 +12,8 @@ export default function FightBot() {
   const [manOption, setManOption] = useState([]);
   const [botOption, setBotOption] = useState([]);
   const [saveResult, setSaveResult] = useState();
-  const [model, setModel] = useState();
+  const [modal, setModal] = useState();
+  
   const optionChoice = (result) => {
     if (result === "lose") {
       setManOption([...manOption, 0]);
@@ -28,7 +29,7 @@ export default function FightBot() {
     setBotOption([]);
     setResult("");
     setBotSelected();
-    setManSelected( );
+    setManSelected();
     setSaveResult(undefined);
   };
   const checkGame = (manOption, botOption) => {
@@ -46,16 +47,27 @@ export default function FightBot() {
       setSaveResult(checkGame(manOption, botOption));
     }
   }, [botOption, manOption]);
+  useEffect(() => {
+    if (saveResult) {
+      const timeOut = setTimeout(() => {
+        setModal(true);
+      }, 3000);
+      return () => clearTimeout(timeOut);
+    }
+  }, [saveResult]);
 
   return (
     <div className="fight-display">
       <Header />
-
-      {saveResult === "man win" ? (
-        <ModalInformationWin handleRestart={handleRestart} />
-      ) : saveResult === "bot win" ? (
-        <ModalInformationLose handleRestart={handleRestart} />
-      ) : null}
+      {modal && (
+        <>
+          {saveResult === "man win" ? (
+            <ModalInformationWin handleRestart={handleRestart} />
+          ) : saveResult === "bot win" ? (
+            <ModalInformationLose handleRestart={handleRestart} />
+          ) : null}
+        </>
+      )}
 
       <FightContent
         result={result}

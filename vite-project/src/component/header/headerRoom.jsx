@@ -1,11 +1,16 @@
 import Plus from "../../assets/PlusForm.png";
 import ButtonEnd from "../../assets/button-out.png";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function HeaderRoom() {
+  const navigate = useNavigate();
   const [count, setCount] = useState(100);
   function handleClick() {
     setCount(count + 10);
+  }
+  const endGame = ()=>{
+    navigate('/')
   }
   return (
     <div className="header">
@@ -25,6 +30,7 @@ export default function HeaderRoom() {
           src={ButtonEnd}
           alt="ReturnChoose"
           style={{ padding: "12px" }}
+          onClick={endGame}
         />
       </div>
     </div>

@@ -193,3 +193,7 @@ body {
 .buttonRestart :hover {
   background-color: #001550;
 }
+.transition-animation{
+  animation-name: rotate;
+  
+}
