@@ -106,7 +106,7 @@ export default function RoomContent() {
                   </div>
                 ))
               ) : (
-                <p>no rooms</p>
+                <p style={{ color: "white" , fontSize:"20px"}}>No rooms</p>
               )}
             </div>
           </div>

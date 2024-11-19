@@ -51,7 +51,7 @@ export default function FightBot() {
     if (saveResult) {
       const timeOut = setTimeout(() => {
         setModal(true);
-      }, 3000);
+      }, 1000);
       return () => clearTimeout(timeOut);
     }
   }, [saveResult]);

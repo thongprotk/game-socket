@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
+import HeaderRoom from "../../component/header/headerRoom";
 const socket = io("http://localhost:3000");
 socket.on("connect", () => {
   console.log("Connected to server");
@@ -21,10 +22,9 @@ export default function Result() {
 
   return (
     <div className="content">
-      <div>Lịch sử đấu</div>
-      <div className="list">
-        {winnerList}
-      </div>
+      <HeaderRoom />
+      <div style={{ color: "white", fontSize:"18px" }}>Lịch sử đấu</div>
+      <div className="list">{winnerList}</div>
     </div>
   );
 }

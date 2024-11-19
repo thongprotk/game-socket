@@ -53,8 +53,6 @@ export default function Fight() {
   };
   const exitGame = () => {
     socket.emit("exitGame", { roomID: roomID });
-    socket.on("play1Left");
-    socket.on("player2Left");
   };
   const checkGame = () => {
     let countManOption = manOption.filter((num) => num === 1).length;
@@ -74,8 +72,6 @@ export default function Fight() {
     socket.emit("resultGame", {
       roomID,
       result,
-      opponentSelected,
-      manSelected,
       player,
     });
     if (saveResult) {
