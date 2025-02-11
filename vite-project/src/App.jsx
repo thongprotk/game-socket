@@ -7,6 +7,7 @@ import Home from "./pages/Home/index.jsx";
 import FightBot from "./pages/FightComputer/index.jsx";
 import Room from "./pages/Room/index.jsx";
 import Result from "./pages/ResultPages/index.jsx";
+import Login from "./pages/Login/index.jsx";
 function App() {
   return (
     <Layout>
@@ -17,6 +18,7 @@ function App() {
           <Route path={RouterName.FIGHTBOT} element={<FightBot />} />
           <Route path={RouterName.ROOM} element={<Room />} />
           <Route path={RouterName.RESULT} element={<Result />} />
+          <Route path={RouterName.LOGIN} element={<Login />} />
         </Routes>
       </BrowserRouter>
     </Layout>
