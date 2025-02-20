@@ -13,7 +13,7 @@ export default function FightBot() {
   const [botOption, setBotOption] = useState([]);
   const [saveResult, setSaveResult] = useState();
   const [modal, setModal] = useState();
-  
+
   const optionChoice = (result) => {
     if (result === "lose") {
       setManOption([...manOption, 0]);
@@ -51,7 +51,7 @@ export default function FightBot() {
     if (saveResult) {
       const timeOut = setTimeout(() => {
         setModal(true);
-      }, 1000);
+      }, 1550);
       return () => clearTimeout(timeOut);
     }
   }, [saveResult]);

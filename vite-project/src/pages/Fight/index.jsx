@@ -77,9 +77,12 @@ export default function Fight() {
     if (saveResult) {
       const timeOut = setTimeout(() => {
         setShowModal(true);
-      }, 2000);
+      }, 1500);
       return () => clearTimeout(timeOut);
     }
+    return () => {
+      socket.off("resuktGame");
+    };
   }, [saveResult]);
 
   return (

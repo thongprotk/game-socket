@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import RoomLayout from "../../assets/room-layout.png";
 import io from "socket.io-client";
-import { useNavigate } from "react-router-dom";
+import { useAsyncError, useNavigate } from "react-router-dom";
 import { RouterName } from "../../../constants";
 
 const socket = io("http://localhost:3000");
@@ -11,7 +11,7 @@ export default function RoomContent() {
   const [startGame, setStartGame] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [roomCreated, setRoomCreated] = useState(false);
-
+  const [messagePlayerLeft, setMessagePlayerLeft] = useState();
   const createRoom = () => {
     const newRoomID = Math.floor(1 + Math.random() * 9).toString();
     setRoomID(newRoomID);
@@ -33,17 +33,8 @@ export default function RoomContent() {
     }
   };
   useEffect(() => {
-    socket.on("waiting_for_player", (data) => {
-      console.log("dddd", data);
-      if (data.player1) {
-        setStartGame(true);
-      }
-    });
-    socket.on("room-created", () => {
-      setRoomCreated(true);
-    });
     socket.on("gameReady", (data) => {
-      if (data.roomID && data.playe1 && data.player2) {
+      if (data.roomID && !!data.playe1 && !!data.player2) {
         setStartGame(false);
       }
     });
@@ -58,20 +49,18 @@ export default function RoomContent() {
         )}`
       );
     });
+
     return () => {
       socket.off("room-list");
-      socket.off("game-ready");
-      socket.off("room-created");
+      socket.off("gameReady");
       socket.off("playersConnected");
-      socket.off("waiting_for_player");
     };
-  }, [navigate, startGame, rooms]);
-  console.log(rooms);
+  }, [navigate, startGame, rooms, roomID]);
   return (
     <div className="room-content">
       <div>
         {startGame ? (
-          <div className="text-content">Waiting For Player.........</div>
+          <div className="text-content">Waiting For Player...</div>
         ) : (
           <div className="input-room">
             <form
@@ -106,7 +95,7 @@ export default function RoomContent() {
                   </div>
                 ))
               ) : (
-                <p style={{ color: "white" , fontSize:"20px"}}>No rooms</p>
+                <p style={{ color: "white", fontSize: "20px" }}>No rooms</p>
               )}
             </div>
           </div>

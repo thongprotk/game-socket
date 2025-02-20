@@ -43,6 +43,7 @@ export default function HomeContent() {
     setIsSearching(true);
     setTime(60); // Reset thời gian về 60 giây
     joinRoom(roomID);
+    console.log("121", roomID);
   };
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export default function HomeContent() {
           `${data.player1 ? 1 : 2}`
         )}`
       );
+      setIsSearching(false);
     });
     return () => {
       socket.off("playersConnected");
@@ -67,70 +69,48 @@ export default function HomeContent() {
   return (
     <div className="contain-click">
       <div className="click">
-        {/* {roomID ? (
-          <div className="displayTimeFindUserVsOpponent">
-            <div className="user">{player1}</div>
-            <div className="vs">
+        {isSearching ? (
+          <div className="time">
+            <div className="timeLoading"></div>
+            <div className="click-end">
+              <div style={{ fontWeight: "bolder" }}> {time} </div>
+              <div style={{ color: "white", fontSize: "16px", width: "116px" }}>
+                Đang tìm trận....
+              </div>
+              <div
+                onClick={matchEnd}
+                style={{ color: "#FFFFFF", fontSize: "14px" }}
+              >
+                Huỷ tìm trận
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="buttonFindOpponent">
               <img
-                src={Vs}
-                alt=""
+                src={ButtonUserVsUser}
+                alt="ButtonUserVsUser"
                 style={{
+                  width: "103px",
+                  height: "42px",
                   position: "absolute",
-                  top: "108px",
-                  padding: "0 0 40px 0 ",
                 }}
+                onClick={startSearch}
               />
             </div>
-            <div className="opponent">{}</div>
-          </div>
-        ) : ( */}
-        <>
-          {isSearching ? (
-            <div className="time">
-              <div className="timeLoading"></div>
-              <div className="click-end">
-                <div style={{ fontWeight: "bolder" }}> {time} </div>
-                <div
-                  style={{ color: "white", fontSize: "16px", width: "116px" }}
-                >
-                  Đang tìm trận....
-                </div>
-                <div
-                  onClick={matchEnd}
-                  style={{ color: "#FFFFFF", fontSize: "14px" }}
-                >
-                  Huỷ tìm trận
-                </div>
-              </div>
+            <div className="buttonFindRoom" onClick={handleRoom}>
+              PHÒNG ĐẤU
             </div>
-          ) : (
-            <>
-              <div className="buttonFindOpponent">
-                <img
-                  src={ButtonUserVsUser}
-                  alt="ButtonUserVsUser"
-                  style={{
-                    width: "103px",
-                    height: "42px",
-                    position: "absolute",
-                  }}
-                  onClick={startSearch}
-                />
-              </div>
-              <div className="buttonFindRoom" onClick={handleRoom}>
-                PHÒNG ĐẤU
-              </div>
-              <div className="buttonUserVsBot" onClick={handleStartBot}>
-                <img
-                  src={ButtonUserVsBot}
-                  alt="ButtonUserVsBot"
-                  style={{ width: "99px", height: "41px" }}
-                />
-              </div>
-            </>
-          )}
-        </>
-        {/* )} */}
+            <div className="buttonUserVsBot" onClick={handleStartBot}>
+              <img
+                src={ButtonUserVsBot}
+                alt="ButtonUserVsBot"
+                style={{ width: "99px", height: "41px" }}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
