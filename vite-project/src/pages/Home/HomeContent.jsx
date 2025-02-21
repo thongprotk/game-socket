@@ -23,7 +23,6 @@ export default function HomeContent() {
   const joinRoom = () => {
     socket.emit("joinRoom", roomID);
   };
-
   useEffect(() => {
     if (isSearching && time > 0) {
       const timer = setInterval(() => {
@@ -38,26 +37,32 @@ export default function HomeContent() {
       setIsSearching(false);
     }
   }, [isSearching, time]);
-
   const startSearch = () => {
     setIsSearching(true);
-    setTime(60); // Reset thời gian về 60 giây
+    setTime(60); // Đặt thời gian tìm trận là 60 giây
     joinRoom(roomID);
-    console.log("121", roomID);
   };
 
   useEffect(() => {
     socket.on("playersConnected", (data) => {
-      navigate(
-        `${RouterName.FIGHT.replace(":roomID", roomID).replace(
-          ":player",
-          `${data.player1 ? 1 : 2}`
-        )}`
-      );
-      setIsSearching(false);
+      console.log("playersConnected:", data);
+    });
+
+    // Khi đủ 2 người, vào trận
+    socket.on("gameReady", (data) => {
+      if (data.roomID && data.player1 && data.player2) {
+        setIsSearching(false);
+        navigate(
+          `${RouterName.FIGHT.replace(":roomID", roomID).replace(
+            ":player",
+            `${data.player1 === socket.id ? 1 : 2}`
+          )}`
+        );
+      }
     });
     return () => {
       socket.off("playersConnected");
+      socket.off("gameReady");
     };
   }, [navigate]);
 

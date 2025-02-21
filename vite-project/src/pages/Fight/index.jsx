@@ -19,13 +19,14 @@ export default function Fight() {
   const [saveResult, setSaveResult] = useState();
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
-    socket.on("playersConnected", () => {
-      roomID;
-    });
+    // socket.on("playersConnected", () => {
+    //   roomID;
+    // });
     if (roomID) {
       console.log("Joined room:", roomID);
     }
   }, [roomID]);
+  console.log("22331", player);
   const optionChoice = (result) => {
     if (String(player) ? "1" : "2") {
       if (result === "lose") {
@@ -87,7 +88,7 @@ export default function Fight() {
 
   return (
     <div className="fight-display">
-      <Header />
+      <Header roomID={roomID} />
       {showModal && (
         <>
           {saveResult === "man win" ? (

@@ -24,7 +24,7 @@ export default function FightContent(props) {
     socket,
     optionChoice,
   } = props;
-  const [isActive, setActive] = useState(false);
+  // const [isActive, setActive] = useState(false);
   const { player } = useParams();
   const clickChoice = (rpsChoice) => {
     setActive(!isActive);
