@@ -17,6 +17,7 @@ body {
   justify-content: space-between;
   overflow: hidden;
 }
+
 .energy {
   background: url("../../assets/Frame-Energy.png");
   background-repeat: no-repeat;
@@ -26,6 +27,7 @@ body {
   justify-content: flex-end;
   margin-top: 5px;
   margin-left: 5px;
+  cursor: pointer;
 }
 .contain-click {
   display: flex;
