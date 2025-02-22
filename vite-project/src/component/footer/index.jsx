@@ -25,12 +25,12 @@ export default function Footer() {
           <img
             src={ButtonCup}
             alt=""
-            style={{ border: "none" }}
+            style={{ border: "none", cursor: "pointer" }}
             onClick={handleClick}
           />
         </div>
         <div>
-          <img src={ButtonMenu} alt="" />
+          <img src={ButtonMenu} alt="" style={{ cursor: "pointer" }} />
         </div>
         <div className="dropdown">
           <img src={ButtonSetting} alt="" onClick={toggleDropdown} />
@@ -40,7 +40,7 @@ export default function Footer() {
                 <img
                   src={Sound}
                   alt=""
-                  style={{ padding: "5px 10px 0 20px" }}
+                  style={{ padding: "5px 10px 0 20px", cursor: "pointer" }}
                 />
                 DFX
               </a>
@@ -48,7 +48,7 @@ export default function Footer() {
                 <img
                   src={MakeGold}
                   alt=""
-                  style={{ padding: "0px 10px 0 20px" }}
+                  style={{ padding: "0px 10px 0 20px", cursor: "pointer" }}
                 />
                 KIẾM GOLD
               </a>
@@ -56,7 +56,7 @@ export default function Footer() {
                 <img
                   src={LogReview}
                   alt=""
-                  style={{ padding: "0px 10px 0 20px" }}
+                  style={{ padding: "0px 10px 0 20px", cursor: "pointer" }}
                 />
                 ĐĂNG XUẤT
               </a>

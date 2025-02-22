@@ -103,6 +103,7 @@ body {
 .dropdown {
   position: relative;
   display: inline-block;
+  cursor: pointer;
 }
 .dropdown-content {
   display: flex;

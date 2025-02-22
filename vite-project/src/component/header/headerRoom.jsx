@@ -34,7 +34,7 @@ export default function HeaderRoom(props) {
         <img
           src={ButtonEnd}
           alt="ReturnChoose"
-          style={{ padding: "12px" }}
+          style={{ padding: "12px", cursor: "pointer" }}
           onClick={endGame}
         />
       </div>

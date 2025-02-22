@@ -24,7 +24,7 @@ export default function Header() {
         <img
           src={ButtonSetting}
           alt="ReturnChoose"
-          style={{ padding: "5px" }}
+          style={{ padding: "5px", cursor: "pointer" }}
         />
       </div>
     </div>
