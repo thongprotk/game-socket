@@ -88,7 +88,7 @@ export default function Fight() {
 
   return (
     <div className="fight-display">
-      <Header roomID={roomID} />
+      <Header roomID={roomID} socket={socket} />
       {showModal && (
         <>
           {saveResult === "man win" ? (

@@ -45,6 +45,13 @@ body {
   border-radius: 100%;
   width: 78px;
   height: 78px;
+  cursor: pointer;
+  background-color: aliceblue;
+}
+.punk:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Hiệu ứng sáng */
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
 }
 .drag {
   display: flex;
@@ -55,16 +62,29 @@ body {
   border-radius: 100%;
   width: 78px;
   height: 78px;
+  background-color: aliceblue;
+}
+.drag:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Hiệu ứng sáng */
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
 }
 .leaves {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 0 0 10px;
   border-color: #7aa5e0;
   border-style: solid;
   border-radius: 100%;
   width: 78px;
   height: 78px;
+  background-color: aliceblue;
+}
+.leaves:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Hiệu ứng sáng */
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
 }
 .display-player-choose {
   background: url("../../assets/footer.png");
@@ -159,15 +179,15 @@ body {
 }
 .model-star-win {
   position: absolute;
-  bottom: 50%;  
+  bottom: 50%;
   left: 50%; /* position the left edge of the element at the middle of the parent */
 
   transform: translate(-50%, -50%);
 }
-.model-star-lose{
-   position: absolute;
-   bottom: 90px;  
-   left: 50%; 
+.model-star-lose {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
   transform: translate(-50%, -50%);
 }
 .display-infomation {
@@ -193,7 +213,6 @@ body {
 .buttonRestart :hover {
   background-color: #001550;
 }
-.transition-animation{
+.transition-animation {
   animation-name: rotate;
-  
 }

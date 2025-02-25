@@ -1,10 +1,7 @@
-import { io } from "socket.io-client";
 import Plus from "../../assets/PlusForm.png";
 import ButtonEnd from "../../assets/button-out.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const socket = io("http://localhost:3000");
 
 export default function HeaderRoom(props) {
   const navigate = useNavigate();
@@ -12,7 +9,7 @@ export default function HeaderRoom(props) {
   function handleClick() {
     setCount(count + 10);
   }
-  const { roomID } = props;
+  const { roomID, socket } = props;
   const endGame = () => {
     socket.emit("exitGame", { roomID });
     navigate("/");
