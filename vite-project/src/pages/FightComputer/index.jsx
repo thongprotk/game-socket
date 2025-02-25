@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import FightContent from "../FightComputer/FightContent";
-import Header from "../../component/header/headerRoom";
+import Header from "../../component/header/headerFight";
 import PeopleChoose from "../../component/footer/peopleChoose";
 import ModalInformationWin from "../FightComputer/modeInfomation";
 import { useState } from "react";

@@ -83,7 +83,12 @@ export default function FightContent(props) {
           <img
             src={Leaves}
             alt="Leaves"
-            style={{ rotate: "88deg", width: "150px", height: "150px" }}
+            style={{
+              transform: "scaleX(-1)",
+              rotate: "88deg",
+              width: "150px",
+              height: "150px",
+            }}
           />
         );
       case FIGHT_OPTION.KEO:

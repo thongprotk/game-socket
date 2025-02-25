@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FightContent from "./FightContent";
-import Header from "../../component/header/headerRoom";
+import Header from "../../component/header/headerFight";
 // import ManVsMan from "../../component/footer/manVsMan";
 import ModalInformationWin from "./modaIWin";
 import ModalInformationLose from "./modalLose";
@@ -19,14 +19,10 @@ export default function Fight() {
   const [saveResult, setSaveResult] = useState();
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
-    // socket.on("playersConnected", () => {
-    //   roomID;
-    // });
     if (roomID) {
       console.log("Joined room:", roomID);
     }
   }, [roomID]);
-  console.log("22331", player);
   const optionChoice = (result) => {
     if (String(player) ? "1" : "2") {
       if (result === "lose") {
@@ -41,8 +37,10 @@ export default function Fight() {
   };
   const handleRestart = () => {
     socket.emit("playerClicked", {
-      roomID: roomID,
+      roomID,
     });
+  };
+  useEffect(() => {
     socket.on("playAgain", (data) => {
       setManOption([]);
       setOpponentOption([]);
@@ -51,7 +49,8 @@ export default function Fight() {
       setManSelected(data.fistPlayerChoice);
       setSaveResult(undefined);
     });
-  };
+    return () => socket.off("playAgain");
+  }, []);
   const exitGame = () => {
     socket.emit("exitGame", { roomID: roomID });
   };
@@ -70,6 +69,7 @@ export default function Fight() {
     setSaveResult(checkGame(opponentOption));
   }, [manOption, opponentOption]);
   useEffect(() => {
+    if (!saveResult) return;
     socket.emit("resultGame", {
       roomID,
       result,
@@ -78,11 +78,11 @@ export default function Fight() {
     if (saveResult) {
       const timeOut = setTimeout(() => {
         setShowModal(true);
-      }, 1500);
+      }, 1100);
       return () => clearTimeout(timeOut);
     }
     return () => {
-      socket.off("resuktGame");
+      socket.off("resultGame");
     };
   }, [saveResult]);
 
