@@ -10,9 +10,10 @@ export default function Result() {
   const [winnerList, setWinnerList] = useState([]);
 
   useEffect(() => {
+    socket.emit("getWinList");
+
     socket.on("winList", (data) => {
-      console.log("Danh sách người chiến thắng:", data);
-      setWinnerList(data); // Cập nhật state với dữ liệu từ server
+      setWinnerList(data);
     });
 
     return () => {
@@ -23,8 +24,15 @@ export default function Result() {
   return (
     <div className="content">
       <HeaderRoom />
-      <div style={{ color: "white", fontSize:"18px" }}>Lịch sử đấu</div>
-      <div className="list">{winnerList}</div>
+      <div style={{ color: "white", fontSize: "18px" }}>Lịch sử đấu</div>
+      <div className="list">
+        {winnerList.map((winner, index) => (
+          <div key={index} className="list-item">
+            Room {winner.roomID} - Player {winner.player} {winner.result}{" "}
+            {new Date(winner.createdAt).toLocaleString()}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

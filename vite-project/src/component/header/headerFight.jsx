@@ -1,17 +1,21 @@
+import { useEffect } from "react";
 import Plus from "../../assets/PlusForm.png";
 import ButtonEnd from "../../assets/button-out.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function HeaderRoom() {
+export default function HeaderFight(props) {
   const navigate = useNavigate();
   const [count, setCount] = useState(100);
   function handleClick() {
     setCount(count + 10);
   }
+  const { roomID, socket } = props;
   const endGame = () => {
+    socket.emit("exitGame", { roomID });
     navigate("/");
   };
+
   return (
     <div className="header">
       <div className="energy">

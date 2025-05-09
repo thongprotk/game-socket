@@ -3,7 +3,7 @@ import ButtonUserVsBot from "../../assets/User-vs-Bot.png";
 // import Vs from "../../assets/vs.png";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { RouterName } from "../../../constants";
 
 const socket = io("http://localhost:3000");
@@ -16,7 +16,11 @@ export default function HomeContent() {
   const handleStartBot = () => {
     navigate(RouterName.FIGHTBOT);
   };
-
+  const token = new URLSearchParams(window.location.search).get("token");
+  if (token) {
+    const user = JSON.parse(token);
+    console.log("user", user);
+  }
   const handleRoom = () => {
     navigate(RouterName.ROOM);
   };
@@ -45,7 +49,9 @@ export default function HomeContent() {
 
   useEffect(() => {
     socket.on("playersConnected", (data) => {
-      console.log("playersConnected:", data);
+      if (data.roomID && data.player1 && data.player2) {
+        setIsSearching(false);
+      }
     });
 
     // Khi đủ 2 người, vào trận

@@ -11,7 +11,6 @@ export default function RoomContent() {
   const [startGame, setStartGame] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [roomCreated, setRoomCreated] = useState(false);
-  const [messagePlayerLeft, setMessagePlayerLeft] = useState();
   const createRoom = () => {
     const newRoomID = Math.floor(1 + Math.random() * 9).toString();
     setRoomID(newRoomID);
@@ -34,28 +33,31 @@ export default function RoomContent() {
   };
   useEffect(() => {
     socket.on("gameReady", (data) => {
-      if (data.roomID && !!data.playe1 && !!data.player2) {
+      if (data.roomID && data.player1 && data.player2) {
         setStartGame(false);
+        navigate(
+          `${RouterName.FIGHT.replace(":roomID", data.roomID).replace(
+            ":player",
+            `${data.player1 === socket.id ? 1 : 2}`
+          )}`
+        );
       }
     });
     socket.on("room-list", (data) => {
       setRooms(data);
     });
     socket.on("playersConnected", (data) => {
-      navigate(
-        `${RouterName.FIGHT.replace(":roomID", data.roomID).replace(
-          ":player",
-          `${data.player1 ? 1 : 2}`
-        )}`
-      );
+      if (data.roomID && data.player1 && data.player2) {
+        setStartGame(false);
+      }
     });
-
     return () => {
       socket.off("room-list");
       socket.off("gameReady");
       socket.off("playersConnected");
     };
-  }, [navigate, startGame, rooms, roomID]);
+  }, [setRooms, startGame, rooms, roomID]);
+
   return (
     <div className="room-content">
       <div>
