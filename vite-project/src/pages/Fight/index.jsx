@@ -23,7 +23,6 @@ export default function Fight() {
       console.log("Joined room:", roomID);
     }
   }, [roomID]);
-  console.log(result);
   const optionChoice = (result) => {
     if (String(player) ? "1" : "2") {
       if (result === "lose") {

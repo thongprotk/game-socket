@@ -19,10 +19,13 @@ const Login = () => {
         }
       );
       const token = response.data.access_token;
-      const data = jwtDecode(token);
-      console.log(data);
       // Redirect to profile page after successful login
-      navigate("/profile");
+      if (!token) {
+        alert("Login failed. Please try again.");
+        return;
+      }
+      localStorage.setItem("token", token);
+      navigate("/");
     } catch (err) {
       console.error("Login failed:", err);
       alert("Login failed. Please try again.");
@@ -30,7 +33,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input

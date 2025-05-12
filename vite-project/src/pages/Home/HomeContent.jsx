@@ -16,11 +16,11 @@ export default function HomeContent() {
   const handleStartBot = () => {
     navigate(RouterName.FIGHTBOT);
   };
-  const token = new URLSearchParams(window.location.search).get("token");
-  if (token) {
-    const user = JSON.parse(token);
-    console.log("user", user);
-  }
+  // const token = new URLSearchParams(window.location.search).get("token");
+  // if (token) {
+  //   const user = JSON.parse(token);
+  //   console.log("user", user);
+  // }
   const handleRoom = () => {
     navigate(RouterName.ROOM);
   };

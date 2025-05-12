@@ -8,8 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { RouterName } from "../../../constants";
 
-export default function Footer() {
+export default function Footer(props) {
   const navigate = useNavigate();
+  const { username } = props;
   const [open, setOpen] = useState(false);
   const toggleDropdown = () => {
     setOpen(!open);
@@ -17,7 +18,10 @@ export default function Footer() {
   const handleClick = () => {
     navigate(RouterName.RESULT);
   };
-
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    navigate(RouterName.LOGIN);
+  };
   return (
     <div className="footer">
       <div className="button-click">
@@ -52,14 +56,16 @@ export default function Footer() {
                 />
                 KIẾM GOLD
               </a>
-              <a>
-                <img
-                  src={LogReview}
-                  alt=""
-                  style={{ padding: "0px 10px 0 20px", cursor: "pointer" }}
-                />
-                ĐĂNG XUẤT
-              </a>
+              {username ? (
+                <a onClick={() => handleLogOut()}>
+                  <img
+                    src={LogReview}
+                    alt=""
+                    style={{ padding: "0px 10px 0 20px", cursor: "pointer" }}
+                  />
+                  ĐĂNG XUẤT
+                </a>
+              ) : null}
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
-@import 'pages/Home/style.css';
-@import 'pages/Fight/style.css';
-@import 'pages/FightComputer/style.css';
-@import 'component/layout/style.css';
-@import 'pages/Room/style.css';
-@import 'pages/ResultPages/style.css';
+@import "pages/Home/style.css";
+@import "pages/Fight/style.css";
+@import "pages/FightComputer/style.css";
+@import "component/layout/style.css";
+@import "pages/Room/style.css";
+@import "pages/ResultPages/style.css";
+@import "pages/Login/style.css";
