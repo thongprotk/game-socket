@@ -57,3 +57,15 @@
 .login-container button:hover {
   transform: scale(1.05);
 }
+.google-login {
+  margin-top: 20px;
+  display: flex;
+  gap: 20px;
+}
+.google-login button {
+  background: #4285f4;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}

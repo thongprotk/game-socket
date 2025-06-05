@@ -24,7 +24,7 @@ export default function Result() {
   return (
     <div className="content">
       <HeaderRoom />
-      <div style={{ color: "white", fontSize: "18px" }}>Lịch sử đấu</div>
+      <div style={{ color: "white", fontSize: "24px" }}>Lịch sử đấu</div>
       <div className="list">
         {winnerList.map((winner, index) => (
           <div key={index} className="list-item">
