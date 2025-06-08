@@ -4,5 +4,6 @@ export const RouterName = {
   FIGHTBOT: "/fightbot",
   ROOM: "/room",
   RESULT: "/historyResult",
-  LOGIN: "/login",
+  AUTH: "/auth",
+  GOOGLE: "/auth/google",
 };
