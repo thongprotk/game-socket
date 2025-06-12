@@ -19,8 +19,11 @@ export default function Footer(props) {
     navigate(RouterName.RESULT);
   };
   const handleLogOut = () => {
-    localStorage.removeItem("token");
-    navigate(RouterName.LOGIN);
+    localStorage.removeItem("access_token");
+    navigate(RouterName.AUTH);
+  };
+  const handleLogin = () => {
+    navigate(RouterName.AUTH);
   };
   return (
     <div className="footer">
@@ -65,7 +68,18 @@ export default function Footer(props) {
                   />
                   ĐĂNG XUẤT
                 </a>
-              ) : null}
+              ) : (
+                <a onClick={handleLogin}>
+                  <div>
+                    <img
+                      src={LogReview}
+                      alt=""
+                      style={{ padding: "0px 10px 0 20px", cursor: "pointer" }}
+                    />
+                    ĐĂNG NHẬP
+                  </div>
+                </a>
+              )}
             </div>
           )}
         </div>

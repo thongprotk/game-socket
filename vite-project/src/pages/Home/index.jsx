@@ -11,7 +11,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     if (!token) {
       navigate(RouterName.LOGIN);
       return;
@@ -20,7 +20,7 @@ export default function Home() {
       const data = jwtDecode(token);
       setUsername(data.username);
     } catch (error) {
-      localStorage.removeItem("token");
+      localStorage.removeItem("access_token");
       navigate(RouterName.LOGIN);
     }
   }, [navigate]);

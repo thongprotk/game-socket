@@ -63,7 +63,7 @@ const Auth = () => {
         alert("Login failed. Please try again.");
         return;
       }
-      localStorage.setItem("token", token);
+      localStorage.setItem("access_token", token);
       navigate("/");
     } catch (err) {
       console.error("Login failed:", err);
@@ -81,8 +81,6 @@ const Auth = () => {
           // Lưu token và redirect
           console.log(token);
           localStorage.setItem("access_token", token);
-          const user = jwtDecode(token);
-          return user;
           navigate("/");
         })
         .finally(() => {
