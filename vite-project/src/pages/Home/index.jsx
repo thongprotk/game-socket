@@ -13,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (!token) {
-      navigate(RouterName.LOGIN);
+      navigate(RouterName.AUTH);
       return;
     }
     try {
@@ -21,7 +21,7 @@ export default function Home() {
       setUsername(data.username);
     } catch (error) {
       localStorage.removeItem("access_token");
-      navigate(RouterName.LOGIN);
+      navigate(RouterName.AUTH);
     }
   }, [navigate]);
 
