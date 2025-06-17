@@ -4,7 +4,7 @@ import Leaves from "../../assets/leaves.png";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { useParams } from "react-router-dom";
-
+import ModalDraw from "./modalDraw";
 const socket = io("http://localhost:3000");
 
 const FIGHT_OPTION = {
@@ -38,6 +38,11 @@ export default function FightContent(props) {
     socket.emit(selectedChoice, {
       rpsChoice: rpsChoice,
       roomID: roomID,
+    });
+  };
+  const handleRestart = () => {
+    socket.emit("playerClicked", {
+      roomID,
     });
   };
   useEffect(() => {
@@ -112,7 +117,15 @@ export default function FightContent(props) {
           {opponentSelected && renderChoiceImage(opponentSelected)}
         </div>
       </div>
-      {result && <div className="result">{result}</div>}
+      {result && (
+        <div className="result">
+          {result === "draw" ? (
+            <ModalDraw handleRestart={handleRestart} />
+          ) : (
+            <div className="win-result">{result}</div>
+          )}
+        </div>
+      )}
       <div
         style={{
           color: "white",

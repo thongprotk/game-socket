@@ -197,6 +197,11 @@ body {
   background-color: #091932;
   z-index: 1;
 }
+.display-infomation-draw {
+  width: 375px;
+  position: fixed;
+  z-index: 1;
+}
 .buttonRestart {
   background: url("../../assets/Group-button.png");
   width: 220px;
