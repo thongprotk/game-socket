@@ -195,6 +195,8 @@ body {
   min-height: 100%;
   position: fixed;
   background-color: #091932;
+  /* 90% opacity */
+  background-color: rgba(9, 25, 50, 0.9);
   z-index: 1;
 }
 .display-infomation-draw {
@@ -221,4 +223,126 @@ body {
 }
 .transition-animation {
   animation-name: rotate;
+}
+
+/* Play-again overlay animation */
+.play-again-overlay {
+  animation: fadeIn 240ms ease both;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Choice reveal animation */
+.display-item img {
+  opacity: 0;
+  transform: translateY(12px) scale(0.92);
+  animation: popIn 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Opponent flip animation (mirrored) */
+.display-item .rotate-choose img {
+  animation: flipIn 480ms ease both;
+  transform-origin: center;
+}
+@keyframes flipIn {
+  0% {
+    transform: rotateX(90deg) translateY(-10px);
+    opacity: 0;
+  }
+  60% {
+    transform: rotateX(-8deg) translateY(4px);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(0deg) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Result pulse to emphasize win/lose */
+.result .win-result {
+  animation: pulse 1000ms ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+  }
+  50% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 10px 30px rgba(0, 150, 255, 0.18));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+  }
+}
+
+/* Button press micro-interaction */
+.select-choose .punk,
+.select-choose .drag,
+.select-choose .leaves {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.select-choose .punk:active,
+.select-choose .drag:active,
+.select-choose .leaves:active {
+  transform: scale(0.95) translateY(2px);
+}
+
+/* Play-again modal content slide */
+.play-again-overlay > div {
+  animation: slideUp 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* subtle background shimmer when result visible */
+.display-select.has-result::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0)
+  );
+  pointer-events: none;
+  animation: shimmer 3s linear infinite;
+  opacity: 0.6;
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }

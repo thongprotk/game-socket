@@ -7,16 +7,17 @@ import LogReview from "../../assets/log-out.svg";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { RouterName } from "../../../constants";
-
+import ResultPopup from "../../pages/ResultPages/ResultPopup";
 export default function Footer(props) {
   const navigate = useNavigate();
   const { username } = props;
+  const [showResult, setShowResult] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleDropdown = () => {
     setOpen(!open);
   };
   const handleClick = () => {
-    navigate(RouterName.RESULT);
+    setShowResult(true);
   };
   const handleLogOut = () => {
     localStorage.removeItem("access_token");
@@ -35,6 +36,7 @@ export default function Footer(props) {
             style={{ border: "none", cursor: "pointer" }}
             onClick={handleClick}
           />
+          {showResult && <ResultPopup onClose={() => setShowResult(false)} />}
         </div>
         <div>
           <img src={ButtonMenu} alt="" style={{ cursor: "pointer" }} />

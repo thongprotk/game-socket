@@ -99,6 +99,9 @@ body {
   display: flex;
   justify-content: space-around;
   position: absolute;
+  top: 0;
+  left: 0;
+  align-items: center;
 }
 .dropdown {
   position: relative;
@@ -206,4 +209,11 @@ body {
 .displayTimeFindUserVsOpponent {
   display: flex;
   align-items: center;
+}
+.buttonCancel {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
 }

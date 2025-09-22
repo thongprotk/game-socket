@@ -174,7 +174,8 @@ body {
   width: 375px;
   min-height: 100%;
   position: fixed;
-  background-color: #091932;
+  background-color: #091932 90%;
+  background-color: rgb(9, 25, 50, 0.9);
   z-index: 1;
 }
 .buttonRestart {

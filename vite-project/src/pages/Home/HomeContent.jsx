@@ -2,17 +2,24 @@ import ButtonUserVsUser from "../../assets/user-vs-user.png";
 import ButtonUserVsBot from "../../assets/User-vs-Bot.png";
 // import Vs from "../../assets/vs.png";
 import { useEffect, useState } from "react";
-import io from "socket.io-client";
 import { useNavigate, useParams } from "react-router-dom";
 import { RouterName } from "../../../constants";
-
-const socket = io("http://localhost:3000");
-
+import { useRoom } from "../Context/RoomContext";
 export default function HomeContent() {
   const navigate = useNavigate();
+  const {
+    joinRoom,
+    leaveRoom,
+    isInRoom,
+    socket,
+    roomID,
+    playerNumber,
+    playerPosition,
+    gameState,
+  } = useRoom();
   const [time, setTime] = useState(0);
   const [isSearching, setIsSearching] = useState(false); // Trạng thái tìm trận
-  const [roomID, setRoomID] = useState("112");
+  const [isRoomID, setIsRoomID] = useState("112");
   const handleStartBot = () => {
     navigate(RouterName.FIGHTBOT);
   };
@@ -23,9 +30,6 @@ export default function HomeContent() {
   // }
   const handleRoom = () => {
     navigate(RouterName.ROOM);
-  };
-  const joinRoom = () => {
-    socket.emit("joinRoom", roomID);
   };
   useEffect(() => {
     if (isSearching && time > 0) {
@@ -44,37 +48,39 @@ export default function HomeContent() {
   const startSearch = () => {
     setIsSearching(true);
     setTime(60); // Đặt thời gian tìm trận là 60 giây
-    joinRoom(roomID);
+    joinRoom(isRoomID);
   };
 
   useEffect(() => {
-    socket.on("playersConnected", (data) => {
-      if (data.roomID && data.player1 && data.player2) {
-        setIsSearching(false);
-      }
-    });
-
-    // Khi đủ 2 người, vào trận
-    socket.on("gameReady", (data) => {
-      if (data.roomID && data.player1 && data.player2) {
-        setIsSearching(false);
-        navigate(
-          `${RouterName.FIGHT.replace(":roomID", roomID).replace(
-            ":player",
-            `${data.player1 === socket.id ? 1 : 2}`
-          )}`
-        );
-      }
-    });
-    return () => {
-      socket.off("playersConnected");
-      socket.off("gameReady");
-    };
-  }, [navigate]);
+    if (
+      isInRoom &&
+      roomID &&
+      isSearching &&
+      playerNumber &&
+      playerPosition === "active" &&
+      gameState === "in_progress"
+    ) {
+      setIsSearching(false);
+      navigate(
+        `${RouterName.FIGHT.replace(":roomID", roomID).replace(
+          ":player",
+          playerNumber.toString()
+        )}`
+      );
+    }
+  }, [
+    navigate,
+    isInRoom,
+    roomID,
+    isSearching,
+    playerNumber,
+    playerPosition,
+    gameState,
+  ]);
 
   const matchEnd = () => {
     setIsSearching(false);
-    socket.emit("exitGame", { roomID });
+    leaveRoom(roomID);
     navigate(RouterName.HOME);
   };
   return (
@@ -88,10 +94,7 @@ export default function HomeContent() {
               <div style={{ color: "white", fontSize: "16px", width: "116px" }}>
                 Đang tìm trận....
               </div>
-              <div
-                onClick={matchEnd}
-                style={{ color: "#FFFFFF", fontSize: "14px" }}
-              >
+              <div onClick={matchEnd} className="buttonCancel">
                 Huỷ tìm trận
               </div>
             </div>

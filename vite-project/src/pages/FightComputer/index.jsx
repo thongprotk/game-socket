@@ -5,7 +5,9 @@ import PeopleChoose from "../../component/footer/peopleChoose";
 import ModalInformationWin from "../FightComputer/modeInfomation";
 import { useState } from "react";
 import ModalInformationLose from "./modalinfomationLose";
+import { getSocket } from "../Socket/socket";
 export default function FightBot() {
+  const socket = getSocket();
   const [result, setResult] = useState("");
   const [manSelected, setManSelected] = useState();
   const [botSelected, setBotSelected] = useState();
@@ -58,7 +60,7 @@ export default function FightBot() {
 
   return (
     <div className="fight-display">
-      <Header />
+      <Header socket={socket} />
       {modal && (
         <>
           {saveResult === "man win" ? (

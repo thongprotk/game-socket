@@ -1,26 +1,48 @@
 .content {
   display: flex;
   flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  align-items: center;
 }
 .list {
+  position: absolute;
+  top: 60px;
+  left: 24px;
+  width: 280px;
+  height: fit-content;
+  background: transparent;
+  overflow-y: auto;
+  color: #fff;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
-  justify-content: center;
+  justify-content: space-between;
+}
+.list-title {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  text-align: center;
+  transform: translateX(-50%);
+  font-weight: 600;
+  color: #fff;
+  font-size: 14px;
+  width: 111px;
+  height: 22px;
+}
+.popup-content {
+  position: relative;
+  width: 328px;
+  height: 726px;
+  margin: auto;
+  display: flex;
   align-items: center;
-  /* background-color: #1e1e2f; */
-  border-radius: 12px;
-  color: #ffffff;
-  margin: 8px 16px;
-  padding: 8px 16px;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); */
-  scrollbar-width: thin;
-  scrollbar-color: #888 #2c2c3c;
+  justify-content: center;
 }
 
 .list::-webkit-scrollbar {
-  width: 4px;
+  width: 1px;
 }
 
 .list::-webkit-scrollbar-thumb {
@@ -32,15 +54,13 @@
   background: #2c2c3c;
 }
 .list-item {
-  margin: 8px 16px;
-  padding: 8px 16px;
-  background-color: #2a2a40;
-  border-radius: 8px;
-  text-align: center;
-  transition: background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  height: fit-content;
 }
 
-.list-item:hover {
-  background-color: #38385a;
-  cursor: pointer;
+.player-result {
+  display: flex;
+  justify-content: space-between;
 }

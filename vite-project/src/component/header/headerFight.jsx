@@ -27,6 +27,18 @@ export default function HeaderFight(props) {
             style={{ padding: "14px 8px 0 0" }}
           />
         </div>
+        {/* Connection status */}
+        <div>
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              backgroundColor: socket.connected ? "yellow" : "red",
+              position: "absolute",
+            }}
+          ></div>
+        </div>
       </div>
       <div>
         <img

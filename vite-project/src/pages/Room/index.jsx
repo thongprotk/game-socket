@@ -1,8 +1,8 @@
 import Header from "../../component/header";
 import HeaderFight from "../../component/header/headerFight";
 import RoomContent from "./RoomContent";
-import io from "socket.io-client";
-const socket = io("http://localhost:3000");
+import { getSocket } from "../Socket/socket";
+const socket = getSocket();
 export default function Room() {
   return (
     <div className="content">

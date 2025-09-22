@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import FightContent from "./FightContent";
 import Header from "../../component/header/headerFight";
 // import ManVsMan from "../../component/footer/manVsMan";
 import ModalInformationWin from "./modaIWin";
 import ModalInformationLose from "./modalLose";
-import io from "socket.io-client";
 import { useParams } from "react-router-dom";
-
-const socket = io("http://localhost:3000");
+import { getSocket } from "../Socket/socket";
 
 export default function Fight() {
   const { roomID, player } = useParams();
+  const socket = getSocket();
   const [result, setResult] = useState("");
   const [manSelected, setManSelected] = useState();
   const [manOption, setManOption] = useState([]);
@@ -29,6 +28,7 @@ export default function Fight() {
         setManOption([...manOption, 0]);
         setOpponentOption([...opponentOption, 1]);
       } else if (result === "draw") {
+        // No action needed for draw
       } else {
         setManOption([...manOption, 1]);
         setOpponentOption([...opponentOption, 0]);
@@ -37,7 +37,7 @@ export default function Fight() {
   };
   const handleRestart = () => {
     socket.emit("playerClicked", {
-      roomID,
+      roomID: String(roomID),
     });
   };
   useEffect(() => {
@@ -46,11 +46,23 @@ export default function Fight() {
       setOpponentOption([]);
       setResult("");
       setOpponentSelected(data.secondPlayerChoice);
-      setManSelected(data.fistPlayerChoice);
-      setSaveResult(undefined);
+      setManSelected(data.firstPlayerChoice);
+      setSaveResult(null);
+      setShowModal(false);
     });
-    return () => socket.off("playAgain");
-  }, []);
+    return () => {
+      socket.off("playAgain");
+    };
+  }, [
+    socket,
+    setManOption,
+    setOpponentOption,
+    setResult,
+    setOpponentSelected,
+    setManSelected,
+    setSaveResult,
+    setShowModal,
+  ]);
   // const exitGame = () => {
   //   socket.emit("exitGame", { roomID: roomID });
   //   const handlePlayerLeft = (data) => {
@@ -60,20 +72,16 @@ export default function Fight() {
   //   };
   //   socket.on("player-left", handlePlayerLeft);
   // };
-
-  const checkGame = () => {
+  useEffect(() => {
     let countManOption = manOption.filter((num) => num === 1).length;
     let countOpponentOption = opponentOption.filter((num) => num === 1).length;
     if (countManOption === 1) {
-      return "man win";
+      setSaveResult("man win");
     } else if (countOpponentOption === 1) {
-      return "Opponent win";
+      setSaveResult("Opponent win");
+    } else {
+      setSaveResult(null);
     }
-    return null;
-  };
-  useEffect(() => {
-    setSaveResult(checkGame(manOption));
-    setSaveResult(checkGame(opponentOption));
   }, [manOption, opponentOption]);
   useEffect(() => {
     if (!saveResult) return;
@@ -91,7 +99,7 @@ export default function Fight() {
     return () => {
       socket.off("resultGame");
     };
-  }, [saveResult]);
+  }, [socket, roomID, result, player, saveResult]);
 
   return (
     <div className="fight-display">

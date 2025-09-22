@@ -13,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (!token) {
-      navigate(RouterName.AUTH);
+      // navigate(RouterName.AUTH);
       return;
     }
     try {
