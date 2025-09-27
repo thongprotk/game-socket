@@ -1,12 +1,18 @@
 import Plus from "../../assets/PlusForm.png";
 import ButtonSetting from "../../assets/Frame-setting.png";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { useRoom } from "../../pages/Context/RoomContext";
 export default function Header() {
+  const { isReady, gameInProgress, maxPlayers, activePlayers } = useRoom();
   const [count, setCount] = useState(100);
   function handleClick() {
     setCount(count + 10);
   }
+  useEffect(() => {
+    if (activePlayers >= maxPlayers && !gameInProgress && isReady) {
+      setCount(count - 10);
+    }
+  }, [activePlayers, maxPlayers, gameInProgress, isReady]);
   return (
     <div className="header">
       <div className="energy">

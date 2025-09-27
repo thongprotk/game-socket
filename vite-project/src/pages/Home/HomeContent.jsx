@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RouterName } from "../../../constants";
 import { useRoom } from "../Context/RoomContext";
+import { use } from "react";
 export default function HomeContent() {
   const navigate = useNavigate();
   const {
@@ -16,10 +17,18 @@ export default function HomeContent() {
     playerNumber,
     playerPosition,
     gameState,
+    gameInProgress,
+    error,
+    isConnected,
+    isReady,
+    maxPlayers,
+    activePlayers,
+    clearError,
+    toggleReady,
   } = useRoom();
   const [time, setTime] = useState(0);
   const [isSearching, setIsSearching] = useState(false); // Trạng thái tìm trận
-  const [isRoomID, setIsRoomID] = useState("112");
+  const [isRoomID] = useState("112");
   const handleStartBot = () => {
     navigate(RouterName.FIGHTBOT);
   };
@@ -41,11 +50,21 @@ export default function HomeContent() {
       return () => clearInterval(timer);
     }
     // Khi hết thời gian
-    if (time === 0) {
+    if (time === 0 && isSearching) {
       setIsSearching(false);
+      if (isInRoom) {
+        leaveRoom();
+      }
     }
   }, [isSearching, time]);
   const startSearch = () => {
+    if (!isConnected) {
+      console.log("Chưa kết nối đến server");
+      return;
+    }
+    if (isInRoom) {
+      leaveRoom();
+    }
     setIsSearching(true);
     setTime(60); // Đặt thời gian tìm trận là 60 giây
     joinRoom(isRoomID);
@@ -56,7 +75,6 @@ export default function HomeContent() {
       isInRoom &&
       roomID &&
       isSearching &&
-      playerNumber &&
       playerPosition === "active" &&
       gameState === "in_progress"
     ) {
@@ -77,12 +95,25 @@ export default function HomeContent() {
     playerPosition,
     gameState,
   ]);
-
+  useEffect(() => {
+    if (isSearching && error) {
+      setIsSearching(false);
+      clearError();
+    }
+  }, [error, isSearching]);
+  // Hàm kết thúc tìm trận
   const matchEnd = () => {
     setIsSearching(false);
-    leaveRoom(roomID);
+    setTime(0);
+    if (isInRoom) leaveRoom();
     navigate(RouterName.HOME);
   };
+  useEffect(() => {
+    if (activePlayers >= maxPlayers && !isReady && !gameInProgress) {
+      toggleReady();
+    }
+  }, [activePlayers, maxPlayers, isReady]);
+
   return (
     <div className="contain-click">
       <div className="click">
@@ -91,9 +122,21 @@ export default function HomeContent() {
             <div className="timeLoading"></div>
             <div className="click-end">
               <div style={{ fontWeight: "bolder" }}> {time} </div>
-              <div style={{ color: "white", fontSize: "16px", width: "116px" }}>
-                Đang tìm trận....
+              <div
+                style={{
+                  color: "white",
+                  fontSize: "16px",
+                  width: "150px",
+                  textAlign: "center",
+                }}
+              >
+                {activePlayers >= maxPlayers
+                  ? "Đang chờ đối thủ..."
+                  : "Đang tìm trận...."}
               </div>
+              {error && (
+                <div style={{ color: "red", fontSize: "12px" }}>{error}</div>
+              )}
               <div onClick={matchEnd} className="buttonCancel">
                 Huỷ tìm trận
               </div>
@@ -110,7 +153,7 @@ export default function HomeContent() {
                   height: "42px",
                   position: "absolute",
                 }}
-                onClick={startSearch}
+                onClick={isConnected ? startSearch : undefined}
               />
             </div>
             <div className="buttonFindRoom" onClick={handleRoom}>

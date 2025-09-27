@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-
+import { SOCKET_EVENTS, PLAYER_POSITION, GAME_STATE } from "../../../constants";
 const RoomContext = createContext(null);
 
 export const useRoom = () => {
@@ -15,59 +15,6 @@ export const useRoom = () => {
     throw new Error("useRoom must be used within a RoomProvider");
   }
   return context;
-};
-
-const SOCKET_EVENTS = {
-  // Room management
-  ROOM_CREATED: "room-created",
-  PLAYER_JOINED: "playerJoined",
-  PLAYER_RECONNECTED: "playerReconnected",
-  PLAYER_LEFT: "playerLeft",
-  PLAYER_DISCONNECTED: "playerDisconnected",
-  ROOM_STATUS: "roomStatus",
-  ROOM_LIST: "room-list",
-
-  // Game flow
-  GAME_READY: "gameReady",
-  GAME_STARTED: "gameStarted",
-  GAME_INTERRUPTED: "gameInterrupted",
-  ROUND_FINISHED: "roundFinished",
-  WAITING_FOR_CHOICES: "waitingForChoices",
-
-  // Player actions
-  PLAYER_READY: "playerReady",
-  PLAYER_CHOICE: "playerChoice",
-
-  // Queue management
-  PROMOTED_TO_ACTIVE: "promotedToActive",
-  MOVED_TO_QUEUE: "movedToQueue",
-
-  // Settings
-  SETTINGS_UPDATED: "settingsUpdated",
-
-  // Error handling
-  ERROR: "err",
-
-  // Outgoing events
-  JOIN_ROOM: "joinRoom",
-  EXIT_ROOM: "exitRoom",
-  PLAYER_READY_TOGGLE: "playerReady",
-  SEND_CHOICE: "playerChoice",
-  UPDATE_SETTINGS: "updateRoomSettings",
-};
-
-const PLAYER_POSITION = {
-  ACTIVE: "active",
-  QUEUE: "queue",
-  UNKNOWN: "unknown",
-};
-
-const GAME_STATE = {
-  WAITING: "waiting",
-  READY: "ready",
-  IN_PROGRESS: "in_progress",
-  FINISHED: "finished",
-  INTERRUPTED: "interrupted",
 };
 
 const initialState = {
@@ -116,13 +63,6 @@ export const RoomProvider = ({ socket, children }) => {
   // Utility functions
   const updateState = useCallback((updates) => {
     setState((prevState) => ({ ...prevState, ...updates }));
-  }, []);
-
-  const updateNestedState = useCallback((key, updates) => {
-    setState((prevState) => ({
-      ...prevState,
-      [key]: { ...prevState[key], ...updates },
-    }));
   }, []);
 
   // Socket event handlers
@@ -282,12 +222,10 @@ export const RoomProvider = ({ socket, children }) => {
   );
 
   const handlePlayerLeft = useCallback((data) => {
-    // Room status will be updated via handleRoomStatus
     console.log("Player left:", data.socketId);
   }, []);
 
   const handlePlayerDisconnected = useCallback((data) => {
-    // Room status will be updated via handleRoomStatus
     console.log("Player disconnected:", data.socketId);
   }, []);
 
@@ -446,19 +384,16 @@ export const RoomProvider = ({ socket, children }) => {
     updateState({ error: null });
   }, [updateState]);
 
-  const getRoomList = useCallback(() => {
-    if (!socket) return;
-  }, [socket]);
+  // const getRoomList = useCallback(() => {
+  //   if (!socket) return;
+  // }, [socket]);
 
   // Computed properties
   const computedValues = useMemo(
     () => ({
       isActivePlayer: state.playerPosition === PLAYER_POSITION.ACTIVE,
       isInQueue: state.playerPosition === PLAYER_POSITION.QUEUE,
-      canPlay:
-        state.playerPosition === PLAYER_POSITION.ACTIVE &&
-        !state.gameInProgress,
-      canReady:
+      canInteract:
         state.playerPosition === PLAYER_POSITION.ACTIVE &&
         !state.gameInProgress,
       canMakeChoice:
@@ -487,7 +422,7 @@ export const RoomProvider = ({ socket, children }) => {
       sendChoice,
       updateRoomSettings,
       clearError,
-      getRoomList,
+      // getRoomList,
       socket,
       PLAYER_POSITION,
       GAME_STATE,
@@ -502,7 +437,7 @@ export const RoomProvider = ({ socket, children }) => {
       sendChoice,
       updateRoomSettings,
       clearError,
-      getRoomList,
+      // getRoomList,
       socket,
     ]
   );

@@ -6,38 +6,26 @@ import { useRoom } from "../Context/RoomContext";
 
 export default function RoomContent() {
   const navigate = useNavigate();
-
+  const [time, setTime] = useState(0);
   // Destructure từ RoomContext
   const {
     roomID,
     roomList,
-    roomPlayers,
     isInRoom,
-    isActivePlayer,
-    isInQueue,
     error,
     createRoom,
     joinRoom,
     leaveRoom,
     toggleReady,
-    sendChoice,
-    updateRoomSettings,
     clearError,
-    getRoomList,
     gameState,
     gameInProgress,
     activePlayers,
     maxPlayers,
-    queueLength,
-    totalPlayers,
-    settings,
     playerPosition,
     playerNumber,
     queuePosition,
     isReady,
-    lastResults,
-    waitingForChoices,
-    socket,
   } = useRoom();
 
   // Local state
@@ -50,6 +38,7 @@ export default function RoomContent() {
     setInputRoomID(newRoomID);
     createRoom(newRoomID);
     setIsWaiting(true);
+    setTime(60);
   };
 
   // Tham gia phòng
@@ -71,21 +60,35 @@ export default function RoomContent() {
     handleJoinRoom();
   };
 
-  // Socket event listeners cho room list
+  // Timer effect
   useEffect(() => {
-    if (!socket) return;
+    if (isWaiting && time > 0) {
+      const timer = setInterval(() => {
+        setTime((prevTime) => prevTime - 1);
+      }, 1000);
 
-    // Request initial room list on component mount
-    const getInitialRoomList = () => {
-      // Backend sẽ tự động emit room-list khi connect, không cần gọi thêm
-    };
+      // Xóa timer khi component bị unmount hoặc thời gian kết thúc
+      return () => clearInterval(timer);
+    }
+    // Khi hết thời gian
+    if (time === 0 && !isInRoom && !gameInProgress) {
+      setIsWaiting(false);
+      if (isInRoom) {
+        leaveRoom();
+      }
+    }
+  }, [isWaiting, time, isInRoom, gameInProgress, leaveRoom]);
 
-    getInitialRoomList();
-  }, [socket]);
-
+  // Reset timer when entering waiting state
+  useEffect(() => {
+    if (isWaiting) {
+      setTime(60); // Reset về 60 giây khi bắt đầu chờ
+    } else {
+      setTime(0); // Reset về 0 khi không chờ nữa
+    }
+  }, [isWaiting]);
   // Handle game ready navigation
   useEffect(() => {
-    // Navigate when game actually starts (not just ready)
     if (
       isInRoom &&
       playerPosition === "active" &&
@@ -117,6 +120,7 @@ export default function RoomContent() {
   useEffect(() => {
     if (!isInRoom) {
       setIsWaiting(false);
+      setTime(0);
     }
   }, [isInRoom]);
 
@@ -124,63 +128,67 @@ export default function RoomContent() {
   if (isWaiting && isInRoom) {
     return (
       <div className="room-content">
-        <div className="text-content">
-          {playerPosition === "active" ? (
-            <div>
-              <div>Waiting For Player...</div>
-              <div style={{ marginTop: "10px", fontSize: "14px" }}>
-                Room ID: {roomID}
-              </div>
-              <div style={{ marginTop: "5px", fontSize: "12px" }}>
-                Người chơi hiện tại: {activePlayers}/{maxPlayers}
+        {playerPosition === "active" ? (
+          <div className="time-active">
+            <div className="timeLoading"></div>
+            <div className="click-end-active">
+              <div style={{ fontWeight: "bolder" }}> {time} </div>
+              <div className="info-room">
+                {activePlayers >= maxPlayers
+                  ? "Bắt đầu trận đấu"
+                  : "Chờ người chơi..."}
+                <div style={{ marginTop: "10px", fontSize: "14px" }}>
+                  Room ID: {roomID}
+                </div>
+                <div style={{ marginTop: "5px", fontSize: "14px" }}>
+                  Người chơi hiện tại: {activePlayers}/{maxPlayers}
+                </div>
               </div>
               {activePlayers >= 2 && !gameInProgress && (
                 <button
                   onClick={toggleReady}
                   style={{
-                    marginTop: "10px",
+                    textAlign: "center",
                     padding: "8px 16px",
                     background: isReady ? "#28a745" : "#007bff",
                     color: "white",
                     border: "none",
                     borderRadius: "5px",
                     cursor: "pointer",
-                    marginRight: "10px",
                   }}
                 >
-                  {isReady ? "✓ Ready" : "Ready?"}
+                  {isReady ? "Sẵn sàng" : "Chấp nhận"}
                 </button>
               )}
+              <button
+                onClick={() => {
+                  setIsWaiting(false);
+                  leaveRoom();
+                }}
+                style={{
+                  textAlign: "center",
+                  padding: "8px 16px",
+                  background: "#ff4444",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Hủy tham gia
+              </button>
             </div>
-          ) : playerPosition === "queue" ? (
-            <div>
-              <div>Bạn đang ở hàng đợi (vị trí {queuePosition})</div>
-              <div style={{ marginTop: "10px", fontSize: "14px" }}>
-                Room ID: {roomID}
-              </div>
+          </div>
+        ) : playerPosition === "queue" ? (
+          <div>
+            <div>Bạn đang ở hàng đợi (vị trí {queuePosition})</div>
+            <div style={{ marginTop: "10px", fontSize: "14px" }}>
+              Room ID: {roomID}
             </div>
-          ) : (
-            "Đang vào phòng..."
-          )}
-
-          <button
-            onClick={() => {
-              setIsWaiting(false);
-              leaveRoom();
-            }}
-            style={{
-              marginTop: "10px",
-              padding: "5px 10px",
-              background: "#ff4444",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Hủy
-          </button>
-        </div>
+          </div>
+        ) : (
+          "Đang vào phòng..."
+        )}
       </div>
     );
   }
@@ -238,7 +246,7 @@ export default function RoomContent() {
                 <div className="number-room">Room: {room.roomID}</div>
                 <img src={RoomLayout} alt="Room Layout" />
                 <div style={{ color: "white", fontSize: "14px" }}>
-                  Người chơi: {room.activePlayers}/{room.maxPlayers}
+                  Người chơi: {room.activePlayers}/{room.maxPlayers}{" "}
                   {room.queueLength > 0 && ` | Đợi: ${room.queueLength}`}
                 </div>
                 <button

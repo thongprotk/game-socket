@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSocket } from "../Socket/socket";
+import { getSocket } from "../Service/socket";
 const socket = getSocket();
 
 export default function Result() {
@@ -26,7 +26,7 @@ export default function Result() {
                 <div style={{ fontSize: "16px" }}>
                   Room ID: {winner.roomID} Player: {winner.player}
                 </div>
-                <div>{winner.result}</div>
+                <div className="result-text">{winner.result}</div>
               </div>
               <div>{new Date(winner.createdAt).toLocaleString()}</div>
             </div>

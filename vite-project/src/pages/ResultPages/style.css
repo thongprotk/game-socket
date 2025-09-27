@@ -7,17 +7,17 @@
 }
 .list {
   position: absolute;
-  top: 60px;
+  top: 50px;
   left: 24px;
   width: 280px;
-  height: fit-content;
+  height: 640px;
   background: transparent;
   overflow-y: auto;
   color: #fff;
   list-style: none;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 16px;
 }
 .list-title {
   position: absolute;
@@ -53,14 +53,19 @@
 .list::-webkit-scrollbar-track {
   background: #2c2c3c;
 }
-.list-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-  height: fit-content;
-}
 
 .player-result {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+.result-text {
+  font-size: 14px;
+  font-weight: bold;
+}
+.list-item {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
 }

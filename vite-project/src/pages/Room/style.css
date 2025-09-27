@@ -33,6 +33,10 @@ body {
 .room-content {
   display: flex;
   flex-direction: column;
+  height: 100dvh;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
 }
 .input-id-room {
   border: 2px solid white;
@@ -104,11 +108,7 @@ body {
   cursor: pointer;
   margin: 0 0 10px 0;
 }
-.text-content {
-  font-size: 20px;
-  color: aliceblue;
-  height: 50dvh;
-}
+
 .input-room {
   display: flex;
   flex-direction: column;
@@ -135,4 +135,67 @@ body {
 .number-room {
   color: antiquewhite;
   font-size: 14px;
+}
+.time-active {
+  background: url("../../assets/Frame-sprin.png");
+  width: 94px;
+  height: 102px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  position: relative;
+}
+.timeLoading {
+  background: url("../../assets/Vector-sprin.png");
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 86.51px;
+  background-repeat: no-repeat;
+  position: absolute;
+  animation: spin 2s linear infinite, display-change 8s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes display-change {
+  0% {
+    background: url("../../assets/Vector-sprin.png");
+  }
+  25% {
+    background: url("../../assets/Vector-sprin.png");
+  }
+  50% {
+    background: url("../../assets/Vector-sprin.png");
+  }
+  75% {
+    background: url("../../assets/Vector-sprin.png");
+  }
+  100% {
+  }
+}
+.click-end-active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  position: absolute;
+  top: 40px;
+}
+.info-room {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px !important;
 }

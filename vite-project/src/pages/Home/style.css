@@ -182,6 +182,7 @@ body {
   gap: 40px;
   position: absolute;
   top: 40px;
+  width: 100%;
 }
 .vs {
   background: url("../../assets/set.png");

@@ -5,7 +5,7 @@ import Header from "../../component/header/headerFight";
 import ModalInformationWin from "./modaIWin";
 import ModalInformationLose from "./modalLose";
 import { useParams } from "react-router-dom";
-import { getSocket } from "../Socket/socket";
+import { getSocket } from "../Service/socket";
 
 export default function Fight() {
   const { roomID, player } = useParams();

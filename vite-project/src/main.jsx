@@ -4,7 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RoomProvider } from "./pages/Context/RoomContext.jsx";
-import { getSocket } from "./pages/Socket/socket";
+import { getSocket } from "./pages/Service/socket";
 const socket = getSocket();
 
 const router = createBrowserRouter(

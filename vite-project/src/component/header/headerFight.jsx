@@ -3,8 +3,9 @@ import Plus from "../../assets/PlusForm.png";
 import ButtonEnd from "../../assets/button-out.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useRoom } from "../../pages/Context/RoomContext";
 export default function HeaderFight(props) {
+  const { leaveRoom } = useRoom();
   const navigate = useNavigate();
   const [count, setCount] = useState(100);
   function handleClick() {
@@ -12,7 +13,7 @@ export default function HeaderFight(props) {
   }
   const { roomID, socket } = props;
   const endGame = () => {
-    socket.emit("exitGame", { roomID });
+    leaveRoom();
     navigate("/");
   };
   return (

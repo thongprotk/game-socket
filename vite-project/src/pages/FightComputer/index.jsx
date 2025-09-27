@@ -5,7 +5,7 @@ import PeopleChoose from "../../component/footer/peopleChoose";
 import ModalInformationWin from "../FightComputer/modeInfomation";
 import { useState } from "react";
 import ModalInformationLose from "./modalinfomationLose";
-import { getSocket } from "../Socket/socket";
+import { getSocket } from "../Service/socket";
 export default function FightBot() {
   const socket = getSocket();
   const [result, setResult] = useState("");
