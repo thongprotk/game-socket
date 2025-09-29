@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RouterName } from "../../../constants";
 import { useRoom } from "../Context/RoomContext";
-import { use } from "react";
 export default function HomeContent() {
   const navigate = useNavigate();
   const {
@@ -65,9 +64,11 @@ export default function HomeContent() {
     if (isInRoom) {
       leaveRoom();
     }
-    setIsSearching(true);
-    setTime(60); // Đặt thời gian tìm trận là 60 giây
-    joinRoom(isRoomID);
+    if (!isInRoom) {
+      setIsSearching(true);
+      setTime(60); // Đặt thời gian tìm trận là 60 giây
+      joinRoom(isRoomID);
+    }
   };
 
   useEffect(() => {
@@ -105,14 +106,22 @@ export default function HomeContent() {
   const matchEnd = () => {
     setIsSearching(false);
     setTime(0);
-    if (isInRoom) leaveRoom();
+    if (isInRoom) {
+      leaveRoom();
+    }
     navigate(RouterName.HOME);
   };
   useEffect(() => {
     if (activePlayers >= maxPlayers && !isReady && !gameInProgress) {
+      console.log("Auto-toggling ready:", {
+        activePlayers,
+        maxPlayers,
+        isReady,
+        gameInProgress,
+      });
       toggleReady();
     }
-  }, [activePlayers, maxPlayers, isReady]);
+  }, [activePlayers, maxPlayers, isReady, gameInProgress, toggleReady]);
 
   return (
     <div className="contain-click">
@@ -153,7 +162,7 @@ export default function HomeContent() {
                   height: "42px",
                   position: "absolute",
                 }}
-                onClick={isConnected ? startSearch : undefined}
+                onClick={startSearch}
               />
             </div>
             <div className="buttonFindRoom" onClick={handleRoom}>

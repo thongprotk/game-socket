@@ -29,7 +29,10 @@ const initialState = {
   playerNumber: null,
   queuePosition: null,
   isReady: false,
-
+  hasReservedSlots: false,
+  isWaitingForPlayAgain: false,
+  playAgainVotes: [],
+  playAgainNeeded: 0,
   // Room status
   activePlayers: 0,
   maxPlayers: 2,
@@ -52,6 +55,8 @@ const initialState = {
   // Room list and players
   roomList: [],
   roomPlayers: [],
+  lastWinner: null,
+  playerChoices: {},
 
   // Error handling
   error: null,
@@ -79,13 +84,34 @@ export const RoomProvider = ({ socket, children }) => {
 
   const handlePlayerJoined = useCallback(
     (data) => {
+      console.log("=== PLAYER JOINED EVENT ===");
+      console.log("Event data:", data);
+      console.log("Socket ID:", socket?.id);
+
+      const newPlayerNumber =
+        data.position === "active" ? data.playerNumber ?? null : null;
+
+      if (data.position === "active" && newPlayerNumber) {
+        console.log(
+          `[PLAYER_NUMBER_UPDATE] Player assigned number: ${newPlayerNumber}`
+        );
+      }
+
       updateState({
-        roomID: data.roomID,
+        roomID: String(data.roomID),
         isInRoom: true,
-        playerPosition: data.position,
-        playerNumber: data.playerNumber || null,
-        queuePosition: data.queuePosition || null,
+        playerPosition:
+          data.position === "active"
+            ? PLAYER_POSITION.ACTIVE
+            : data.position === "queue"
+            ? PLAYER_POSITION.QUEUE
+            : PLAYER_POSITION.UNKNOWN,
+        playerNumber: newPlayerNumber,
+        queuePosition:
+          data.position === "queue" ? data.queuePosition ?? null : null,
+        isReady: false,
         playerId: socket?.id,
+        error: null,
       });
     },
     [updateState, socket?.id]
@@ -107,23 +133,35 @@ export const RoomProvider = ({ socket, children }) => {
     (data) => {
       const currentPlayer = data.players.find((p) => p.id === socket?.id);
 
+      console.log("=== ROOM STATUS UPDATE ===");
+      console.log("Room data:", data);
+      console.log("Current player:", currentPlayer);
+      console.log("Socket ID:", socket?.id);
+
+      const newPosition = currentPlayer?.isActive
+        ? PLAYER_POSITION.ACTIVE
+        : currentPlayer?.inQueue
+        ? PLAYER_POSITION.QUEUE
+        : PLAYER_POSITION.UNKNOWN;
+
+      console.log("Calculated position:", newPosition);
+      console.log(
+        "Player number:",
+        currentPlayer?.isActive ? currentPlayer.playerNumber : null
+      );
+
       updateState({
         activePlayers: data.activePlayers,
         maxPlayers: data.maxPlayers,
         queueLength: data.queueLength,
         totalPlayers: data.players.length,
         gameInProgress: data.gameInProgress,
+        hasReserved: data.reserved || false,
         roomPlayers: data.players,
         isReady: currentPlayer?.ready || false,
-        playerPosition: currentPlayer?.isActive
-          ? PLAYER_POSITION.ACTIVE
-          : currentPlayer?.inQueue
-          ? PLAYER_POSITION.QUEUE
-          : PLAYER_POSITION.UNKNOWN,
+        playerPosition: newPosition,
         playerNumber: currentPlayer?.isActive
-          ? data.players
-              .filter((p) => p.isActive)
-              .findIndex((p) => p.id === socket?.id) + 1
+          ? currentPlayer.playerNumber
           : null,
         queuePosition: currentPlayer?.inQueue
           ? data.players
@@ -211,6 +249,39 @@ export const RoomProvider = ({ socket, children }) => {
     },
     [updateState]
   );
+  const handlePlayAgain = useCallback(
+    (data) => {
+      updateState({
+        gameState: GAME_STATE.WAITING,
+        isWaitingForPlayAgain: true,
+        playAgainNeeded: data.players?.length || 2,
+        playAgainVotes: [],
+        currentRound: data.round,
+      });
+    },
+    [updateState]
+  );
+  const handlePlayerVote = useCallback(
+    (data) => {
+      updateState({
+        playAgainVotes: data.votes || [],
+        playAgainNeeded: data.needed || 2,
+      });
+    },
+    [updateState]
+  );
+
+  const handleRemovedForNoPlay = useCallback(
+    (data) => {
+      updateState({
+        playerPosition: PLAYER_POSITION.QUEUE,
+        playerNumber: null,
+        isReady: false,
+        error: "Bạn đã bị chuyển vào hàng đợi vì không chọn chơi tiếp",
+      });
+    },
+    [updateState]
+  );
 
   const handleSettingsUpdated = useCallback(
     (data) => {
@@ -250,13 +321,22 @@ export const RoomProvider = ({ socket, children }) => {
   useEffect(() => {
     if (!socket) return;
 
+    console.log("=== SETTING UP SOCKET LISTENERS ===");
+    console.log("Socket connected:", socket.connected);
+    console.log("Socket ID:", socket.id);
+
     // Update connection status
-    const handleConnect = () => updateState({ isConnected: true });
-    const handleDisconnect = () =>
+    const handleConnect = () => {
+      console.log("Socket connected");
+      updateState({ isConnected: true });
+    };
+    const handleDisconnect = () => {
+      console.log("Socket disconnected");
       updateState({
         isConnected: false,
         gameInProgress: false,
       });
+    };
 
     const eventHandlers = {
       connect: handleConnect,
@@ -277,6 +357,9 @@ export const RoomProvider = ({ socket, children }) => {
       [SOCKET_EVENTS.PLAYER_DISCONNECTED]: handlePlayerDisconnected,
       [SOCKET_EVENTS.ROOM_LIST]: handleRoomList,
       [SOCKET_EVENTS.ERROR]: handleError,
+      [SOCKET_EVENTS.PLAY_AGAIN]: handlePlayAgain,
+      [SOCKET_EVENTS.PLAY_AGAIN_VOTE]: handlePlayerVote,
+      [SOCKET_EVENTS.REMOVED_FOR_NO_PLAY]: handleRemovedForNoPlay,
     };
 
     // Register all event listeners
@@ -312,15 +395,24 @@ export const RoomProvider = ({ socket, children }) => {
     handlePlayerDisconnected,
     handleRoomList,
     handleError,
+    handlePlayAgain,
+    handlePlayerVote,
+    handleRemovedForNoPlay,
   ]);
 
   // Action functions
   const createRoom = useCallback(
     (roomID) => {
       if (!socket || !socket.connected) {
+        console.log("Cannot create room - no socket connection");
         updateState({ error: "Không có kết nối socket" });
         return;
       }
+
+      console.log("=== CREATING ROOM ===");
+      console.log("Room ID:", roomID);
+      console.log("Socket connected:", socket.connected);
+      console.log("Socket ID:", socket.id);
 
       const normalizedRoomID = String(roomID);
       socket.emit(SOCKET_EVENTS.JOIN_ROOM, normalizedRoomID);
@@ -332,9 +424,15 @@ export const RoomProvider = ({ socket, children }) => {
   const joinRoom = useCallback(
     (roomID) => {
       if (!socket || !socket.connected) {
+        console.log("Cannot join room - no socket connection");
         updateState({ error: "Không có kết nối socket" });
         return;
       }
+
+      console.log("=== JOINING ROOM ===");
+      console.log("Room ID:", roomID);
+      console.log("Socket connected:", socket.connected);
+      console.log("Socket ID:", socket.id);
 
       const normalizedRoomID = String(roomID);
       socket.emit(SOCKET_EVENTS.JOIN_ROOM, normalizedRoomID);
@@ -353,8 +451,15 @@ export const RoomProvider = ({ socket, children }) => {
   const toggleReady = useCallback(() => {
     if (!socket || !state.roomID) return;
 
+    console.log(
+      `[FRONTEND] Toggle ready called - Current ready state: ${state.isReady}`
+    );
+    console.log(
+      `[FRONTEND] Room ID: ${state.roomID}, Socket connected: ${socket.connected}`
+    );
+
     socket.emit(SOCKET_EVENTS.PLAYER_READY_TOGGLE, state.roomID);
-  }, [socket, state.roomID]);
+  }, [socket, state.roomID, state.isReady]);
 
   const sendChoice = useCallback(
     (choice) => {
@@ -405,6 +510,11 @@ export const RoomProvider = ({ socket, children }) => {
       gameCanStart:
         state.activePlayers >= 2 &&
         state.roomPlayers.filter((p) => p.isActive).every((p) => p.ready),
+      hasVotedPlayAgain: state.playAgainVotes.includes(state.playerId),
+      allVotedPlayAgain: state.playAgainVotes.length === state.playAgainNeeded,
+      canPlayAgain:
+        state.gameState === GAME_STATE.FINISHED &&
+        state.playerPosition === PLAYER_POSITION.ACTIVE,
     }),
     [state]
   );

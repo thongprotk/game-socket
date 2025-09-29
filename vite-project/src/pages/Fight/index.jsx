@@ -23,16 +23,17 @@ export default function Fight() {
     }
   }, [roomID]);
   const optionChoice = (result) => {
-    if (String(player) ? "1" : "2") {
-      if (result === "lose") {
-        setManOption([...manOption, 0]);
-        setOpponentOption([...opponentOption, 1]);
-      } else if (result === "draw") {
-        // No action needed for draw
-      } else {
-        setManOption([...manOption, 1]);
-        setOpponentOption([...opponentOption, 0]);
-      }
+    // Player 1 or Player 2 logic based on URL param
+    console.log(`[Fight] Player ${player} got result: ${result}`);
+
+    if (result === "lose") {
+      setManOption([...manOption, 0]);
+      setOpponentOption([...opponentOption, 1]);
+    } else if (result === "draw") {
+      // No action needed for draw
+    } else {
+      setManOption([...manOption, 1]);
+      setOpponentOption([...opponentOption, 0]);
     }
   };
   const handleRestart = () => {

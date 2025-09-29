@@ -4,17 +4,19 @@ import ButtonEnd from "../../assets/button-out.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRoom } from "../../pages/Context/RoomContext";
-export default function HeaderFight(props) {
-  const { leaveRoom } = useRoom();
+import { RouterName } from "../../../constants";
+export default function HeaderFight() {
+  const { leaveRoom, socket, isInRoom } = useRoom();
   const navigate = useNavigate();
   const [count, setCount] = useState(100);
   function handleClick() {
     setCount(count + 10);
   }
-  const { roomID, socket } = props;
   const endGame = () => {
-    leaveRoom();
-    navigate("/");
+    if (isInRoom) {
+      leaveRoom();
+    }
+    navigate(RouterName.HOME);
   };
   return (
     <div className="header">

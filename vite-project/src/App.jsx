@@ -8,9 +8,11 @@ import FightBot from "./pages/FightComputer/index.jsx";
 import Room from "./pages/Room/index.jsx";
 import Result from "./pages/ResultPages/index.jsx";
 import Auth from "./pages/Auth/index.jsx";
+import PlayerNumberSync from "./pages/Context/PlayerNumberSync.jsx";
 function App() {
   return (
     <Layout>
+      <PlayerNumberSync />
       <Routes>
         <Route path={RouterName.HOME} element={<Home />} />
         <Route path={RouterName.FIGHT} element={<Fight />} />

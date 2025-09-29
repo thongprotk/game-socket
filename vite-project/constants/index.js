@@ -25,6 +25,11 @@ export const SOCKET_EVENTS = {
   ROUND_FINISHED: "roundFinished",
   WAITING_FOR_CHOICES: "waitingForChoices",
 
+  //play again
+  PLAY_AGAIN: "playAgain",
+  PLAY_AGAIN_VOTE: "playAgainVote",
+  PLAYER_CLICKED: "playerClicked",
+  REMOVED_FOR_NO_PLAY: "removedForNoPlay",
   // Player actions
   PLAYER_READY: "playerReady",
   PLAYER_CHOICE: "playerChoice",
