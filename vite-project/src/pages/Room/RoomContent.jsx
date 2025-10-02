@@ -51,9 +51,9 @@ export default function RoomContent() {
   const handleCreateRoom = () => {
     const newRoomID = Math.floor(1 + Math.random() * 9).toString();
     setInputRoomID(newRoomID);
+    setTime(30);
     createRoom(newRoomID);
     setIsWaiting(true);
-    setTime(60);
   };
 
   // Tham gia phòng
@@ -83,6 +83,7 @@ export default function RoomContent() {
     }
 
     console.log("Attempting to join room:", roomId);
+    setTime(30);
     joinRoom(roomId);
     setIsWaiting(true);
   };
@@ -92,51 +93,19 @@ export default function RoomContent() {
     e.preventDefault();
     handleJoinRoom();
   };
-
-  // Timer effect
-  useEffect(() => {
-    if (isWaiting && time > 0) {
-      const timer = setInterval(() => {
-        setTime((prevTime) => prevTime - 1);
-      }, 1000);
-
-      // Xóa timer khi component bị unmount hoặc thời gian kết thúc
-      return () => clearInterval(timer);
-    }
-    // Khi hết thời gian
-    if (time === 0 && !isInRoom && !gameInProgress) {
-      setIsWaiting(false);
-      if (isInRoom) {
-        leaveRoom();
-      }
-    }
-  }, [isWaiting, time, isInRoom, gameInProgress, leaveRoom]);
-
-  // Reset timer when entering waiting state
-  useEffect(() => {
-    if (isWaiting) {
-      setTime(60); // Reset về 60 giây khi bắt đầu chờ
-    } else {
-      setTime(0);
-    }
-  }, [isWaiting]);
   // Clear waiting state when successfully positioned in room
   useEffect(() => {
-    console.log("=== ROOM CONTENT STATE ===");
-    console.log("isInRoom:", isInRoom);
-    console.log("playerPosition:", playerPosition);
-    console.log("playerNumber:", playerNumber);
-    console.log("isWaiting:", isWaiting);
-    console.log("activePlayers:", activePlayers);
-    console.log("maxPlayers:", maxPlayers);
-
     if (
       isInRoom &&
       (playerPosition === PLAYER_POSITION.ACTIVE ||
         playerPosition === PLAYER_POSITION.QUEUE)
     ) {
-      console.log(`Successfully positioned in room as: ${playerPosition}`);
       setIsWaiting(false);
+      const timer = setInterval(() => {
+        setTime((prevTime) => prevTime - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
     }
   }, [
     isInRoom,
@@ -146,7 +115,17 @@ export default function RoomContent() {
     activePlayers,
     maxPlayers,
   ]);
-
+  useEffect(() => {
+    if (
+      time <= 0 &&
+      isInRoom &&
+      (playerPosition === PLAYER_POSITION.ACTIVE ||
+        playerPosition === PLAYER_POSITION.QUEUE)
+    ) {
+      setIsWaiting(false);
+      leaveRoom();
+    }
+  }, [time, isInRoom, playerPosition, leaveRoom]);
   // Player number sync is now handled globally by PlayerNumberSync component
 
   // Handle game ready navigation
@@ -333,7 +312,7 @@ export default function RoomContent() {
           style={{ textAlign: "center", color: "white" }}
         >
           <div style={{ fontSize: "18px", marginBottom: "10px" }}>
-            🕐 Đang chờ trong hàng đợi
+            Đang chờ trong hàng đợi
           </div>
           <div style={{ fontSize: "16px", color: "#ffa500" }}>
             Vị trí: {queuePosition}
@@ -418,7 +397,6 @@ export default function RoomContent() {
             Tham Gia
           </button>
         </form>
-
         <button
           className="create-room"
           onClick={handleCreateRoom}
@@ -426,7 +404,6 @@ export default function RoomContent() {
         >
           Tạo Phòng
         </button>
-
         <button
           className="refresh-rooms"
           onClick={() => window.location.reload()}
@@ -443,8 +420,7 @@ export default function RoomContent() {
         >
           Làm Mới Danh Sách
         </button>
-
-        <button
+        {/* <button
           onClick={() => {
             console.log("=== MANUAL STATE CHECK ===");
             console.log("Current state:", {
@@ -477,7 +453,7 @@ export default function RoomContent() {
         </button>
 
         {/* Debug info */}
-        <div
+        {/* <div
           style={{
             background: "rgba(0,0,0,0.5)",
             color: "white",
@@ -514,8 +490,8 @@ export default function RoomContent() {
               ))}
             </div>
           )}
-        </div>
-
+        </div>{" "}
+        */}
         {/* Error display */}
         {error && (
           <div
@@ -530,7 +506,6 @@ export default function RoomContent() {
             {error}
           </div>
         )}
-
         {/* Available rooms */}
         <div className="container">
           {roomList && roomList.length > 0 ? (

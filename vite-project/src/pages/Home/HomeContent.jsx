@@ -52,23 +52,27 @@ export default function HomeContent() {
     if (time === 0 && isSearching) {
       setIsSearching(false);
       if (isInRoom) {
+        console.log("Leaving room due to timeout");
         leaveRoom();
       }
     }
   }, [isSearching, time]);
   const startSearch = () => {
     if (!isConnected) {
-      console.log("Chưa kết nối đến server");
       return;
     }
+    setIsSearching(false);
+    setTime(0);
+
     if (isInRoom) {
       leaveRoom();
     }
-    if (!isInRoom) {
+
+    setTimeout(() => {
       setIsSearching(true);
       setTime(60); // Đặt thời gian tìm trận là 60 giây
       joinRoom(isRoomID);
-    }
+    }, 100);
   };
 
   useEffect(() => {
@@ -98,17 +102,27 @@ export default function HomeContent() {
   ]);
   useEffect(() => {
     if (isSearching && error) {
+      console.log("=== SEARCH ERROR ===");
+      console.log("Error:", error);
       setIsSearching(false);
       clearError();
     }
-  }, [error, isSearching]);
+  }, [error, isSearching, clearError]);
+
   // Hàm kết thúc tìm trận
   const matchEnd = () => {
     setIsSearching(false);
     setTime(0);
+
     if (isInRoom) {
       leaveRoom();
     }
+
+    // Clear any errors
+    if (error) {
+      clearError();
+    }
+
     navigate(RouterName.HOME);
   };
   useEffect(() => {
@@ -122,6 +136,18 @@ export default function HomeContent() {
       toggleReady();
     }
   }, [activePlayers, maxPlayers, isReady, gameInProgress, toggleReady]);
+
+  // Reset search state when component mounts
+  useEffect(() => {
+    console.log("Initial state:", { isInRoom, isSearching, error });
+
+    setIsSearching(false);
+    setTime(0);
+
+    if (error) {
+      clearError();
+    }
+  }, []);
 
   return (
     <div className="contain-click">

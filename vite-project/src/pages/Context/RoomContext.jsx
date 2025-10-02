@@ -84,9 +84,9 @@ export const RoomProvider = ({ socket, children }) => {
 
   const handlePlayerJoined = useCallback(
     (data) => {
-      console.log("=== PLAYER JOINED EVENT ===");
-      console.log("Event data:", data);
-      console.log("Socket ID:", socket?.id);
+      // console.log("=== PLAYER JOINED EVENT ===");
+      // console.log("Event data:", data);
+      // console.log("Socket ID:", socket?.id);
 
       const newPlayerNumber =
         data.position === "active" ? data.playerNumber ?? null : null;
@@ -133,10 +133,10 @@ export const RoomProvider = ({ socket, children }) => {
     (data) => {
       const currentPlayer = data.players.find((p) => p.id === socket?.id);
 
-      console.log("=== ROOM STATUS UPDATE ===");
-      console.log("Room data:", data);
-      console.log("Current player:", currentPlayer);
-      console.log("Socket ID:", socket?.id);
+      // console.log("=== ROOM STATUS UPDATE ===");
+      // console.log("Room data:", data);
+      // console.log("Current player:", currentPlayer);
+      // console.log("Socket ID:", socket?.id);
 
       const newPosition = currentPlayer?.isActive
         ? PLAYER_POSITION.ACTIVE
@@ -321,17 +321,18 @@ export const RoomProvider = ({ socket, children }) => {
   useEffect(() => {
     if (!socket) return;
 
-    console.log("=== SETTING UP SOCKET LISTENERS ===");
-    console.log("Socket connected:", socket.connected);
-    console.log("Socket ID:", socket.id);
+    // console.log("=== SETTING UP SOCKET LISTENERS ===");
+    // console.log("Socket connected:", socket.connected);
+    // console.log("Socket ID:", socket.id);
 
     // Update connection status
     const handleConnect = () => {
-      console.log("Socket connected");
+      // console.log("=== SOCKET CONNECTED ===");
+      // console.log("Socket ID:", socket.id);
       updateState({ isConnected: true });
     };
     const handleDisconnect = () => {
-      console.log("Socket disconnected");
+      // console.log("=== SOCKET DISCONNECTED ===");
       updateState({
         isConnected: false,
         gameInProgress: false,
@@ -409,10 +410,10 @@ export const RoomProvider = ({ socket, children }) => {
         return;
       }
 
-      console.log("=== CREATING ROOM ===");
-      console.log("Room ID:", roomID);
-      console.log("Socket connected:", socket.connected);
-      console.log("Socket ID:", socket.id);
+      // console.log("=== CREATING ROOM ===");
+      // console.log("Room ID:", roomID);
+      // console.log("Socket connected:", socket.connected);
+      // console.log("Socket ID:", socket.id);
 
       const normalizedRoomID = String(roomID);
       socket.emit(SOCKET_EVENTS.JOIN_ROOM, normalizedRoomID);
@@ -429,10 +430,10 @@ export const RoomProvider = ({ socket, children }) => {
         return;
       }
 
-      console.log("=== JOINING ROOM ===");
-      console.log("Room ID:", roomID);
-      console.log("Socket connected:", socket.connected);
-      console.log("Socket ID:", socket.id);
+      // console.log("=== JOINING ROOM ===");
+      // console.log("Room ID:", roomID);
+      // console.log("Socket connected:", socket.connected);
+      // console.log("Socket ID:", socket.id);
 
       const normalizedRoomID = String(roomID);
       socket.emit(SOCKET_EVENTS.JOIN_ROOM, normalizedRoomID);
@@ -444,19 +445,33 @@ export const RoomProvider = ({ socket, children }) => {
   const leaveRoom = useCallback(() => {
     if (!socket || !state.roomID) return;
 
+    // console.log("=== LEAVING ROOM ===");
+    // console.log("Room ID:", state.roomID);
+    // console.log("Socket connected:", socket.connected);
+
+    // Emit exit room event to server
     socket.emit("exitRoom", state.roomID);
-    setState(initialState);
-  }, [socket, state.roomID]);
+
+    // Reset state but preserve connection status
+    const resetState = {
+      ...initialState,
+      isConnected: socket.connected, // Preserve actual connection status
+    };
+    setState(resetState);
+
+    // Clear any error state
+    updateState({ error: null });
+  }, [socket, state.roomID, updateState]);
 
   const toggleReady = useCallback(() => {
     if (!socket || !state.roomID) return;
 
-    console.log(
-      `[FRONTEND] Toggle ready called - Current ready state: ${state.isReady}`
-    );
-    console.log(
-      `[FRONTEND] Room ID: ${state.roomID}, Socket connected: ${socket.connected}`
-    );
+    // console.log(
+    //   `[FRONTEND] Toggle ready called - Current ready state: ${state.isReady}`
+    // );
+    // console.log(
+    //   `[FRONTEND] Room ID: ${state.roomID}, Socket connected: ${socket.connected}`
+    // );
 
     socket.emit(SOCKET_EVENTS.PLAYER_READY_TOGGLE, state.roomID);
   }, [socket, state.roomID, state.isReady]);
