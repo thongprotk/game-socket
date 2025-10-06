@@ -23,12 +23,30 @@ export default function Result() {
           {winnerList.map((winner, index) => (
             <div key={index} className="list-item">
               <div className="player-result">
-                <div style={{ fontSize: "16px" }}>
-                  Room ID: {winner.roomID} Player: {winner.player}
+                <div style={{ fontSize: "16px", fontWeight: "500" }}>
+                  Room ID: {winner.roomID} - Player: {winner.player}
                 </div>
-                <div className="result-text">{winner.result}</div>
+                <div
+                  className="result-text"
+                  style={{
+                    color:
+                      winner.result === "win"
+                        ? "#3FC864"
+                        : winner.result === "lose"
+                        ? "#E96200"
+                        : "gray",
+                  }}
+                >
+                  {winner.result === "win"
+                    ? "WIN"
+                    : winner.result === "lose"
+                    ? "LOSE"
+                    : "DRAW"}
+                </div>
               </div>
-              <div>{new Date(winner.createdAt).toLocaleString()}</div>
+              <div style={{ fontSize: "12px", color: "#74A0DB" }}>
+                {new Date(winner.createdAt).toLocaleString()}
+              </div>
             </div>
           ))}
         </div>

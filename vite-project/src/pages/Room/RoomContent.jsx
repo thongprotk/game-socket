@@ -198,7 +198,7 @@ export default function RoomContent() {
               <div style={{ marginTop: "5px", fontSize: "14px" }}>
                 Người chơi hiện tại: {activePlayers}/{maxPlayers}
               </div>
-              {playerNumber && (
+              {/* {playerNumber && (
                 <div
                   style={{
                     marginTop: "5px",
@@ -208,10 +208,10 @@ export default function RoomContent() {
                 >
                   Bạn là Player {playerNumber}
                 </div>
-              )}
+              )} */}
 
               {/* Hiển thị trạng thái ready của tất cả người chơi */}
-              {roomPlayers && roomPlayers.length > 0 && (
+              {/* {roomPlayers && roomPlayers.length > 0 && (
                 <div style={{ marginTop: "10px", fontSize: "13px" }}>
                   <div style={{ fontWeight: "bold", marginBottom: "5px" }}>
                     Trạng thái người chơi:
@@ -243,7 +243,7 @@ export default function RoomContent() {
                       </div>
                     ))}
                 </div>
-              )}
+              )} */}
             </div>
             {activePlayers >= 2 && !gameInProgress && (
               <div style={{ textAlign: "center", marginTop: "10px" }}>
