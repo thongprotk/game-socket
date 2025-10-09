@@ -68,6 +68,5 @@ export default function PlayerNumberSync() {
     navigate,
   ]);
 
-  // Component này không render gì
   return null;
 }

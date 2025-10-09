@@ -5,11 +5,10 @@ import Header from "../../component/header/headerFight";
 import ModalInformationWin from "./modaIWin";
 import ModalInformationLose from "./modalLose";
 import { useParams } from "react-router-dom";
-import { getSocket } from "../Service/socket";
-
+import { useRoom } from "../Context/RoomContext";
 export default function Fight() {
+  const { playerId, socket } = useRoom();
   const { roomID, player } = useParams();
-  const socket = getSocket();
   const [result, setResult] = useState("");
   const [manSelected, setManSelected] = useState();
   const [manOption, setManOption] = useState([]);
@@ -87,9 +86,13 @@ export default function Fight() {
   useEffect(() => {
     if (!saveResult) return;
     socket.emit("resultGame", {
+      playerId: playerId,
       roomID,
       result,
       player,
+    });
+    socket.emit("getWinList", {
+      playerId: playerId,
     });
     if (saveResult) {
       const timeOut = setTimeout(() => {
@@ -99,6 +102,7 @@ export default function Fight() {
     }
     return () => {
       socket.off("resultGame");
+      socket.off("getWinList");
     };
   }, [socket, roomID, result, player, saveResult]);
 
