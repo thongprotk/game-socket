@@ -28,31 +28,16 @@ export default function PlayerNumberSync() {
         const currentRoomID = fightMatch[1];
         const currentPlayerNumber = parseInt(fightMatch[2]);
 
-        console.log(
-          `[PlayerNumberSync] Fight page detected - Room: ${currentRoomID}, Player: ${currentPlayerNumber}`
-        );
-        console.log(
-          `[PlayerNumberSync] Expected - Room: ${roomID}, Player: ${playerNumber}`
-        );
-
         // Nếu cùng room nhưng player number khác, redirect
         if (
           String(currentRoomID) === String(roomID) &&
           currentPlayerNumber !== playerNumber
         ) {
-          console.log(
-            `[PlayerNumberSync] ⚠️ Player number mismatch! Redirecting...`
-          );
-          console.log(
-            `[PlayerNumberSync] From ${currentPlayerNumber} to ${playerNumber}`
-          );
-
           const newFightUrl = RouterName.FIGHT.replace(
             ":roomID",
             roomID
           ).replace(":player", playerNumber.toString());
 
-          console.log(`[PlayerNumberSync] New URL: ${newFightUrl}`);
           navigate(newFightUrl, { replace: true });
         } else {
           console.log(`[PlayerNumberSync] ✅ Player number is correct`);
